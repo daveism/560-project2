@@ -306,6 +306,7 @@ create_ace_data <-  function(hurr_meta){
 
   year_ace <- aggregate(x=hurr_meta$ace, by=list(hurr_meta$year, hurr_meta$basin),FUN=sum, na.rm=TRUE, na.action=NULL)
   year_ace <- dplyr::rename(year_ace, year = Group.1, basin = Group.2, ace = x)
+  year_ace$year <- as.numeric(year_ace$year)
 
   cnt_named_temp <- subset(hurr_meta, hurr_meta$max_wind_mph > 39)
   year_named_cnt <- aggregate(x=cnt_named_temp$storm_id, by=list(cnt_named_temp$year, cnt_named_temp$basin),FUN=length)
@@ -352,7 +353,6 @@ create_ace_data <-  function(hurr_meta){
   year_ace <- merge(x = year_ace, y=year_major_ms_avg, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_intense_mph_avg, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_intense_ms_avg, by=c("year", "basin") , all.x = TRUE)
-
 
   rm(cnt_major_temp)
   rm(year_named_cnt)

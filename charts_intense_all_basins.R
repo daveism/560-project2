@@ -51,7 +51,6 @@ for (thebasin in basins){
   chart_image <- gsub(" ", "_", chart_image)
   ggsave(chart_image, Chart_ScatterYearWindmajor_zoom, width=image_width, height=image_height)
 
-
   Chart_BarYearWindmajor <- ggBarMaxAll(
     basin_meta_hurr,
     paste("Major Hurricanes Max Wind by Storm\n", thebasin, sep = " - "),
