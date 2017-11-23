@@ -300,3 +300,78 @@ append_obs_data <- function(hurr_obs, hurr_meta){
  return(hurr_obs)
 
 }
+
+#yearly summary data with ACE, counts, avg wind speeds
+create_ace_data <-  function(hurr_meta){
+
+  year_ace <- aggregate(x=hurr_meta$ace, by=list(hurr_meta$year, hurr_meta$basin),FUN=sum, na.rm=TRUE, na.action=NULL)
+  year_ace <- dplyr::rename(year_ace, year = Group.1, basin = Group.2, ace = x)
+
+  cnt_named_temp <- subset(hurr_meta, hurr_meta$max_wind_mph > 39)
+  year_named_cnt <- aggregate(x=cnt_named_temp$storm_id, by=list(cnt_named_temp$year, cnt_named_temp$basin),FUN=length)
+  year_named_cnt <- dplyr::rename(year_named_cnt, year = Group.1, basin = Group.2, named_count = x)
+
+  cnt_hur_temp <- subset(hurr_meta, hurr_meta$max_category >= 1)
+  year_hur_cnt <- aggregate(x=cnt_hur_temp$storm_id, by=list(cnt_hur_temp$year, cnt_hur_temp$basin),FUN=length)
+  year_hur_cnt <- dplyr::rename(year_hur_cnt, year = Group.1, basin = Group.2, hurricane_count = x)
+
+  year_hur_mph_avg <- aggregate(x=cnt_hur_temp$max_wind_mph, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
+  year_hur_mph_avg <- dplyr::rename(year_hur_mph_avg, year = Group.1, basin = Group.2, hurricane_avg_max_mph = x)
+
+  year_hur_ms_avg <- aggregate(x=cnt_hur_temp$max_wind_ms, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
+  year_hur_ms_avg <- dplyr::rename(year_hur_ms_avg, year = Group.1, basin = Group.2, hurricane_avg_max_ms = x)
+
+  cnt_major_temp <- subset(hurr_meta, hurr_meta$max_category >= 3)
+  year_major_cnt <- aggregate(x=cnt_major_temp$storm_id, by=list(cnt_major_temp$year, cnt_major_temp$basin),FUN=length)
+  year_major_cnt <- dplyr::rename(year_major_cnt, year = Group.1, basin = Group.2, major_hurricane_count = x)
+
+  year_major_mph_avg <- aggregate(x=cnt_hur_temp$max_wind_mph, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
+  year_major_mph_avg <- dplyr::rename(year_major_mph_avg, year = Group.1, basin = Group.2, major_avg_max_mph = x)
+
+  year_major_ms_avg <- aggregate(x=cnt_hur_temp$max_wind_ms, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
+  year_major_ms_avg <- dplyr::rename(year_major_ms_avg, year = Group.1, basin = Group.2, major_avg_max_ms = x)
+
+  cnt_intense_temp <- subset(hurr_meta, hurr_meta$max_category >= 4)
+  year_intense_cnt <- aggregate(x=cnt_intense_temp$storm_id, by=list(cnt_intense_temp$year, cnt_intense_temp$basin),FUN=length)
+  year_intense_cnt <- dplyr::rename(year_intense_cnt, year = Group.1, basin = Group.2, intense_hurricane_count = x)
+
+  year_intense_mph_avg <- aggregate(x=cnt_hur_temp$max_wind_mph, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
+  year_intense_mph_avg <- dplyr::rename(year_intense_mph_avg, year = Group.1, basin = Group.2, intense_avg_max_mph = x)
+
+  year_intense_ms_avg <- aggregate(x=cnt_hur_temp$max_wind_ms, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
+  year_intense_ms_avg <- dplyr::rename(year_intense_ms_avg, year = Group.1, basin = Group.2, intense_avg_max_ms = x)
+
+  year_ace <- merge(x = year_ace, y=year_named_cnt, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_hur_cnt, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_major_cnt, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_intense_cnt, by=c("year", "basin") , all.x = TRUE)
+
+  year_ace <- merge(x = year_ace, y=year_hur_mph_avg, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_hur_ms_avg, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_major_mph_avg, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_major_ms_avg, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_intense_mph_avg, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_intense_ms_avg, by=c("year", "basin") , all.x = TRUE)
+
+
+  rm(cnt_major_temp)
+  rm(year_named_cnt)
+  rm(year_major_mph_avg)
+  rm(year_major_ms_avg)
+
+  rm(cnt_intense_temp)
+  rm(year_intense_cnt)
+  rm(year_intense_mph_avg)
+  rm(year_intense_ms_avg)
+
+  rm(cnt_hur_temp)
+  rm(year_hur_cnt)
+  rm(year_hur_mph_avg)
+  rm(year_hur_ms_avg)
+
+
+  rm(cnt_named_temp)
+  rm(year_major_cnt)
+
+  return(year_ace)
+}

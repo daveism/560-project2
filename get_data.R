@@ -4,6 +4,7 @@
 
 #there is also a sepreate file for the pacific ocean
 #documentation of data is at http://www.aoml.noaa.gov/hrd/hurdat/newhurdat-format.pdf
+# NOTE when NOAA updates the hurdat2 data after this year this file WILL CHANGE and this will need to be updated.
 tracks_url_atlantic <- paste0("http://www.aoml.noaa.gov/hrd/hurdat/hurdat2-1851-2016-apr2017.txt")
 tracks_url_pacific <- paste0("http://www.aoml.noaa.gov/hrd/hurdat/hurdat2-nepac-1949-2016-apr2017.txt")
 
@@ -28,6 +29,9 @@ pacific_obs_data  <-  append_obs_data(pacific_obs_data, pacific_meta_data)
 #append datasets
 hurr_meta <- rbind(atlantic_meta_data,pacific_meta_data)
 hurr_obs <- rbind(atlantic_obs_data,pacific_obs_data)
+
+#ceate year ACE summary data
+year_ace  <- create_ace_data(hurr_meta)
 
 #remove single datasets
 rm(pacific_meta_data)
