@@ -21,6 +21,9 @@ source(paste(repo_loc,"clean_data_functions.R", sep = "/"))
 #get datasets
 source(paste(repo_loc,"get_data.R", sep = "/"))
 
+hurr_meta_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic")
+year_ace <- aggregate(x=hurr_meta_wa$ace, by=list(hurr_meta_wa$year),FUN=sum, na.rm=TRUE, na.action=NULL)
+
 #add map functions
 source(paste(repo_loc,"map_functions.R", sep = "/"))
 

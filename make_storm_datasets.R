@@ -32,8 +32,8 @@ get_storm_data <- function(the_storm_id){
   map_track <- make_hurricane_track_maps(storm_obs,
                 title,
                 "NOAA - Hurrdat2 data")
-  
-  
+
+
   image_name <- paste( "storm", storm_obs$storm_name[1], storm_obs$storm_id[1], "track",  "map" , sep = "_")
 
   map_image <- paste(image_name, "png", sep=".")

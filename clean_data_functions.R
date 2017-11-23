@@ -205,7 +205,16 @@ create_obs_data <- function(hurr_tracks, hurr_meta, basin, basinid){
   hurr_obs$wind_mph <- as.numeric(format(as.numeric((hurr_obs$wind_knts * 6076)/5280), digits = 0))
 
   #add ms or meters per second
-  hurr_obs$meters_per_second <- as.numeric(as.numeric(hurr_obs$wind_knts) * 0.5144)
+  hurr_obs$wind_meters_per_second <- as.numeric(as.numeric(hurr_obs$wind_knts) * 0.5144)
+
+  #trim status code
+  hurr_obs$status_code <- trimws(hurr_obs$status_code)
+
+  #trim time
+  hurr_obs$time <- trimws(hurr_obs$time)
+
+  #get knots squared for calculating ace
+  hurr_obs$wind_knts_sq <- hurr_obs$wind_knts^2
 
   return(hurr_obs)
 }
@@ -214,7 +223,7 @@ create_obs_data <- function(hurr_tracks, hurr_meta, basin, basinid){
 append_meta_data <- function(hurr_obs, hurr_meta){
 
   storm_max_wind <- aggregate(x=hurr_obs$wind_mph, by=list(hurr_obs$storm_id),FUN=max, na.rm=TRUE, na.action=NULL)
-  storm_max_wind_ms <- aggregate(x=hurr_obs$meters_per_second, by=list(hurr_obs$storm_id),FUN=max, na.rm=TRUE, na.action=NULL)
+  storm_max_wind_ms <- aggregate(x=hurr_obs$wind_meters_per_second, by=list(hurr_obs$storm_id),FUN=max, na.rm=TRUE, na.action=NULL)
   storm_min_pressure <- aggregate(x=hurr_obs$pressure, by=list(hurr_obs$storm_id),FUN=min, na.rm=TRUE, na.action=NULL)
   storm_max_category <- aggregate(x=hurr_obs$category, by=list(hurr_obs$storm_id),FUN=max, na.rm=TRUE, na.action=NULL)
 
@@ -230,10 +239,21 @@ append_meta_data <- function(hurr_obs, hurr_meta){
 
   storm_max_category$max_category <- as.numeric(storm_max_category$max_category)
 
+  #calculate ace for storm
+  ace_sub <-  subset(hurr_obs, hurr_obs$status_code == 'SS' |  hurr_obs$status_code == 'HU' |  hurr_obs$status_code == 'TS')
+  #ace_sub <- subset(ace_sub, ace_sub$storm_name != 'UNNAMED')
+  ace_sub <-  subset(ace_sub, hurr_obs$wind_mph > 39)
+  ace_sub <- subset(ace_sub, ace_sub$time == '0000' |  ace_sub$time == '0600' |  ace_sub$time == '1200' |  ace_sub$time == '1800')
+  storm_ace <- aggregate(x=ace_sub$wind_knts_sq, by=list(ace_sub$storm_id, ace_sub$year),FUN=sum, na.rm=TRUE, na.action=NULL)
+  storm_ace$ace <- 10^-4*(storm_ace$x)
+  storm_ace <- dplyr::rename(storm_ace,  storm_id = Group.1, aceyear = Group.2, sum_of_sq_knts = x)
+
+
   hurr_meta <- merge(x = hurr_meta, y=storm_max_wind, by=c("storm_id") , all.x = TRUE)
   hurr_meta <- merge(x = hurr_meta, y=storm_max_wind_ms, by=c("storm_id") , all.x = TRUE)
   hurr_meta <- merge(x = hurr_meta, y=storm_min_pressure, by=c("storm_id") , all.x = TRUE)
   hurr_meta <- merge(x = hurr_meta, y=storm_max_category, by=c("storm_id") , all.x = TRUE)
+  hurr_meta <- merge(x = hurr_meta, y=storm_ace, by=c("storm_id") , all.x = TRUE)
 
   hurr_obs <- merge(x = hurr_obs, y=storm_max_category, by=c("storm_id") , all.x = TRUE)
 
@@ -245,7 +265,7 @@ append_meta_data <- function(hurr_obs, hurr_meta){
 append_obs_data <- function(hurr_obs, hurr_meta){
 
   storm_max_wind <- aggregate(x=hurr_obs$wind_mph, by=list(hurr_obs$storm_id),FUN=max, na.rm=TRUE, na.action=NULL)
-  storm_max_wind_ms <- aggregate(x=hurr_obs$meters_per_second, by=list(hurr_obs$storm_id),FUN=max, na.rm=TRUE, na.action=NULL)
+  storm_max_wind_ms <- aggregate(x=hurr_obs$wind_meters_per_second, by=list(hurr_obs$storm_id),FUN=max, na.rm=TRUE, na.action=NULL)
   storm_min_pressure <- aggregate(x=hurr_obs$pressure, by=list(hurr_obs$storm_id),FUN=min, na.rm=TRUE, na.action=NULL)
   storm_max_category <- aggregate(x=hurr_obs$category, by=list(hurr_obs$storm_id),FUN=max, na.rm=TRUE, na.action=NULL)
 
@@ -261,10 +281,21 @@ append_obs_data <- function(hurr_obs, hurr_meta){
 
   storm_max_category$max_category <- as.numeric(storm_max_category$max_category)
 
+  #calculate ace for storm
+  ace_sub <-  subset(hurr_obs, hurr_obs$status_code == 'SS' |  hurr_obs$status_code == 'HU' |  hurr_obs$status_code == 'TS')
+  #ace_sub <- subset(ace_sub, ace_sub$storm_name != 'UNNAMED')
+  ace_sub <-  subset(ace_sub, hurr_obs$wind_mph > 39)
+  ace_sub <- subset(ace_sub, ace_sub$time == '0000' |  ace_sub$time == '0600' |  ace_sub$time == '1200' |  ace_sub$time == '1800')
+  storm_ace <- aggregate(x=ace_sub$wind_knts_sq, by=list(ace_sub$storm_id, ace_sub$year),FUN=sum, na.rm=TRUE, na.action=NULL)
+  storm_ace$ace <- 10^-4*(storm_ace$x)
+  storm_ace <- dplyr::rename(storm_ace,  storm_id = Group.1, aceyear = Group.2, sum_of_sq_knts = x)
+
+
   hurr_obs <- merge(x = hurr_obs, y=storm_max_wind, by=c("storm_id") , all.x = TRUE)
   hurr_obs <- merge(x = hurr_obs, y=storm_max_wind_ms, by=c("storm_id") , all.x = TRUE)
   hurr_obs <- merge(x = hurr_obs, y=storm_min_pressure, by=c("storm_id") , all.x = TRUE)
   hurr_obs <- merge(x = hurr_obs, y=storm_max_category, by=c("storm_id") , all.x = TRUE)
+  hurr_obs <- merge(x = hurr_obs, y=storm_ace, by=c("storm_id") , all.x = TRUE)
 
  return(hurr_obs)
 
