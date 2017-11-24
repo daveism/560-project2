@@ -1,0 +1,121 @@
+---
+title: Are intense hurricanse hurricnes become more intense?
+output: html_document
+---
+
+# Introduction
+
+There has been a lot of work around hurricanes and what will happen as our climate changes and warms.  Current research is showing that the number of hurricances has not really changed (get reference).  (add counts of named storms, hurricanes,  major, and intense). In fact some reaserch indicates that due to shifting wind patterns associated with global warming there might be fewer storms.  
+
+However it appears that there might be some increases in intensity (ar15 and new climate report).  One of the typical measures of the intensity of a tropical strom is maximun sustained winds, (get definuiation and ref). The focus on this paper will be to investigate that the winds are getting just a bit more intense for intense hurricanes.
+
+There are serveral measures of intensity,  since my focys is wind based I will look at two differen measurements of intensity for storms Accul (ACE) (get refence). ref to noaa website showing calculation parameters and wikipedia calulations Show ace fomration.
+
+The second measurement we will use is max winds for meters per second.(ref) which is used in many studies and is sometimes refered to as Lifetime Maxuimom Intensity (LMI). 
+
+When investigating intensity and winds there are potential issues with hurricane data specilfically with how it was collected pre and post satetlaite error (date ?) (add ref) because of these issues I will look at the entire history but the conclusions will be drawn on post stateliate and speciacally after the dovak technique was developed (add ref).  This does pose some issues with limiting the historical record, but it is out of the scope of this paper to invesitate issues with the observatiosn.  There is also ecvendce the dovark technique has some underestimates in the early 1980 (ref landsea).  As a result Many research proejcts have focused on more recent trends late 80;s rearly 90s to early 2010's due to this cahnge in observations and how hard it is overcome.  Basically there is no good way to compare the differences of the pre and post satelte eras when estiamtiung wind speed in the hirstoraical tropical cyclone records. (ref)
+
+It also seems that the north atlantic has some of the best observations (ref) so we will limit the investigation to this area of the world.  
+
+for both ACE and LMI i will look at four types of storms named storms, used by ace (noaa ref) defined as  Subtropical storms, Tropical Storms, and Hurricanes all with winds greator than 39 mph. Hurricanes, Majpr Hurricanes category 3 or greator, and Intense Hurricanes category 4 or greator.  this should start to indicate if indeed intense storms are getting just a bit more intense.
+
+
+
+```{r}
+
+```
+
+
+# Methodology
+Note: To follow along with R code please download the code () and run the r script .R.  This will install the packages, functions, and load the datasets I am using.  The hurdat data needs some cleaning and manipulation to prepare for anaysis.  tihis is all done with my scripts.
+
+
+The basis for all our work will be getting data from Hurdat2 data from NOAA.  The hurdat2 data is reanalyixed and fixed for accuracy (http://www.aoml.noaa.gov/hrd/hurdat/hurdat_pub.html ref) so it should be fairly accurate, althought the latest year (2017) we not be availlable until 2018.  First we need to calculate both ace and LMI.  
+
+The formulat for ACE is expressed as:
+
+$$ACE=10^{-4}\sum v_{\max}^{2}$$
+vmax is the maximum sustained wind speed in knots. Sum refers to the sum of all observatiosn every 6 hours starting at 0000 and for the entire life of the storm as long as at meets the qualifiucations of Subtropical, Tropical Storm, Hurricane status while winds are greater than 39 mph.
+
+for non math people that formula can be expresed as (show link to github code ) or as where hurr_obs is the data frame containing all hurricane observations (hurdata2 - ref)
+
+```{r}
+
+#only use named storms defined as Subtropical storms, Tropical Storms, and Hurricanes
+#ace_subset <-  subset(hurr_obs, hurr_obs$status_code == 'SS' |  hurr_obs$status_code == 'HU' |  hurr_obs$status_code == 'TS')
+
+
+#winds 39 MPH or greator (some Subtropical storms do not meet this)
+#ace_subset <-  subset(ace_subset, ace_subset$wind_mph > 39)
+
+#max wind every 6 hours tarting at 0000
+#ace_subset <- subset(ace_subset, ace_subset$time == '0000' |  ace_subset$time == '0600' |  ace_subset$time == '1200' |  ace_subset$time == '1800')
+
+#square the the max wind in knots
+#ace_subset$wind_knts_sq <- ace_subset$wind_knts^2
+
+#sum the squared winds
+#sum_wind_knots <- aggregate(x=ace_sub$wind_knts_sq, by=list(ace_sub$storm_id, ace_sub$year),FUN=sum, na.rm=TRUE, na.action=NULL)
+
+#multiple by 10 to -4 power. 
+#storm_ace$ace <- 10^-4*(storm_ace$x)
+
+
+```
+
+
+The calculation LMI as max winds for meters per second. Is a lot simpler.  Hurdat2 data has sustianed winds in knots. so a simple converion of knots to meters per second is all that is needed.  (add formula). using our data this can be expresed as 
+```{r}
+#hurr_obs$wind_meters_per_second <- as.numeric(as.numeric(hurr_obs$wind_knts) * 0.5144)
+
+```
+
+This provides easy ways to derive  LMI and ACE for each storm and then summarize the data by year.
+
+Show plots four columns nammed, hur, maj, int
+
+two rows 
+history
+1975+
+
+the preceding figures show the 
+
+we also want to see how the effects that max wind m/s and ace have in each indivual year.  we are expecting some very slight increases in intense hurricanes as we move foward in time.  then we take the  log on the max wind meters per second.  So we I will use linear regresion to asses wether this true.
+
+
+# Discussion 
+
+The preousi fuigures give us some insight into the possiblity that intense tropial systems are becoming more intense. This however does not provide us with any statistcal evidence of the increase.
+
+To look into the idea the max wind speeds are indeed increasing slightly we are using the max wind as m/s. m/s is used in numerouse studies (ref).  To see how this is chaning of the years I am converting the the years to a factor, in R then using the log of the maximum wind m/s of the storm.  Assuming the standard error fits the output we can chart the coef or slope to see how each year is  changing. Similar to what we did with >>>?
+
+I wnat to look at the yearly totals and indivual stroms to see differences
+
+(add charts of scatter yearly and storm with r) (and for history and 1975+)
+
+there seems to be large step drop with coef around 1968, this is about the time of satelite obs started so I can only assume this is due to changes in data collection.  I have nto been able to find any research that mentions this. In fact many reasearch leaves out the years befor 1980,  which makes me wonder why? This would be a good topic for futuure resarch...  
+
+Looking at 1975 plus we say a definite uptick and clear patter upwards. This shows soem clear indications that indeed storms seem to gettting more intense even if it is small whhich is what we would expect.  each storm should be gettiting just a bit mroe intese. especuall intense storms.  this verifies what we observerd in the simple yearyly fgiures.  
+
+With ace we should not have to do any log nor use the coeffiences.  ACE is and index that measures hte total intensity so it is arleady normailzied and ready for comapreis.  
+
+(add charts of scatter for yearly and strom with r)
+
+again we see a very clear trend updwards which suppports our inital hyothesis.  we don't see the drop and pick up that we say with the coeficents on wind speed.  
+
+There are some issue that I encountered look at historical ace or amx wind we see ig step are ound 1968.  This is probably dioe
+
+# Conclusion 
+
+Looking at data avaulable the re appears to be a somewhat clear small trend updwards in winds and storm intensity expresssed as ACE.  the trends seem small and have low correlation but in this case that makes sense we are expecting a very small increase.  there are many varrrables that things that determine hwo tropical sytems develop and intensify.  global warming is not a big culprit in this but it appears that it's possible there are other studies that show a poleward shift with tropical systems (ref) but not a lot in intensity.   
+
+SOme things that should cause hestiation to say for sure, is the there us research indicating a cycle to tropiucal developement (ef) so with smaller time frame of 1980 - 2016 we coudl be witnessing one of these cycles so there is probably the need to re-look at this later.  infact the step down we see in the coeffients could be one of these cycles so we could be picking up one of these as noise.    
+
+a seocnd caution, is I am using simple regriosn. much of the resrarch into intesnity of tropical systems uses quadratic regresion to find the extreemes (ref). This beyond the scope of this work.
+
+# Refrences
+
+# Data sources
+csvs
+
+# appendix: Reproducable Research with R and Github

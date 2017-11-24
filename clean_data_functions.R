@@ -155,10 +155,6 @@ create_obs_data <- function(hurr_tracks, hurr_meta, basin, basinid){
   #make wind numeric
   hurr_obs <-  dplyr::mutate(hurr_obs, wind_knts = ifelse(wind_knts == " -99", NA, as.numeric(wind_knts)))
 
-
-  #bar chart of wind_knts by year
-  #ggplot(hurr_obs, aes(x = wind_knts)) + geom_histogram(binwidth = 10)
-
   #fix pressure
   hurr_obs  <- dplyr::mutate(hurr_obs, pressure = ifelse(pressure == " -999", NA, as.numeric(pressure)))
 
@@ -183,9 +179,6 @@ create_obs_data <- function(hurr_tracks, hurr_meta, basin, basinid){
   #add data time field make data formated date field
   hurr_obs$date_time <- ymd_hm(paste(hurr_obs$date, hurr_obs$time))
   hurr_obs$date <- ymd(hurr_obs$date)
-
-
-
 
   # add decade
   hurr_obs$decade <- paste0(substring(year(hurr_obs$date_time), 1, 3), "0s")
@@ -304,45 +297,90 @@ create_ace_data <-  function(hurr_meta){
   year_ace <- dplyr::rename(year_ace, year = Group.1, basin = Group.2, ace = x)
   year_ace$year <- as.numeric(year_ace$year)
 
+  #get max wind mph, max wind meters per second, max category, and min pressure for year
+  year_max_wind_mph <- aggregate(x=hurr_meta$max_wind_mph, by=list(hurr_meta$year, hurr_meta$basin),FUN=max, na.rm=TRUE, na.action=NULL)
+  year_max_wind_ms <- aggregate(x=hurr_meta$max_wind_ms, by=list(hurr_meta$year, hurr_meta$basin),FUN=max, na.rm=TRUE, na.action=NULL)
+  year_min_pressure <- aggregate(x=hurr_meta$min_pressure, by=list(hurr_meta$year, hurr_meta$basin),FUN=min, na.rm=TRUE, na.action=NULL)
+  year_max_category <- aggregate(x=hurr_meta$max_category, by=list(hurr_meta$year, hurr_meta$basin),FUN=max, na.rm=TRUE, na.action=NULL)
+  year_max_ace <- aggregate(x=hurr_meta$ace, by=list(hurr_meta$year, hurr_meta$basin),FUN=max, na.rm=TRUE, na.action=NULL)
+
+  #fix inf so merger is sucessfull
+  year_max_wind_mph[mapply(is.infinite, year_max_wind_mph)] <- NA
+  year_max_wind_ms[mapply(is.infinite, year_max_wind_ms)] <- NA
+  year_min_pressure[mapply(is.infinite, year_min_pressure)] <- NA
+  year_max_category[mapply(is.infinite, year_max_category)] <- NA
+  year_max_ace[mapply(is.infinite, year_max_ace)] <- NA
+
+  #rename columns to something meaningfull
+  year_max_wind_mph <- dplyr::rename(year_max_wind_mph, year = Group.1, basin = Group.2, max_wind_mph = x)
+  year_max_wind_ms <- dplyr::rename(year_max_wind_ms, year = Group.1, basin = Group.2, max_wind_ms = x)
+  year_min_pressure <- dplyr::rename(year_min_pressure, year = Group.1, basin = Group.2, min_pressure = x)
+  year_max_category <- dplyr::rename(year_max_category, year = Group.1, basin = Group.2, max_category = x)
+  year_max_ace <- dplyr::rename(year_max_ace, year = Group.1, basin = Group.2, max_ace = x)
+
+  year_max_wind_mph$year <- as.numeric(year_max_wind_mph$year)
+  year_max_wind_ms$year <- as.numeric(year_max_wind_ms$year)
+  year_min_pressure$year <- as.numeric(year_min_pressure$year)
+  year_max_category$year <- as.numeric(year_max_category$year)
+  year_max_ace$year <- as.numeric(year_max_ace$year)
+
+  year_max_wind_mph$max_wind_mph <- as.numeric(year_max_wind_mph$max_wind_mph)
+  year_max_wind_ms$max_wind_ms <- as.numeric(year_max_wind_ms$max_wind_ms)
+  year_min_pressure$min_pressure <- as.numeric(year_min_pressure$min_pressure)
+  year_max_category$max_category <- as.numeric(year_max_category$max_category)
+  year_max_ace$max_ace <- as.numeric(year_max_ace$max_ace)
+
+  #NAMED stomr count used by ACE TS, Hurricanes, and Subtropical.  Winds > 39 mph
   cnt_named_temp <- subset(hurr_meta, hurr_meta$max_wind_mph > 39)
   year_named_cnt <- aggregate(x=cnt_named_temp$storm_id, by=list(cnt_named_temp$year, cnt_named_temp$basin),FUN=length)
   year_named_cnt <- dplyr::rename(year_named_cnt, year = Group.1, basin = Group.2, named_count = x)
 
+  #count if hurricanes
   cnt_hur_temp <- subset(hurr_meta, hurr_meta$max_category >= 1)
   year_hur_cnt <- aggregate(x=cnt_hur_temp$storm_id, by=list(cnt_hur_temp$year, cnt_hur_temp$basin),FUN=length)
   year_hur_cnt <- dplyr::rename(year_hur_cnt, year = Group.1, basin = Group.2, hurricane_count = x)
 
+  #hurricane avg wind in mpg
   year_hur_mph_avg <- aggregate(x=cnt_hur_temp$max_wind_mph, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
   year_hur_mph_avg <- dplyr::rename(year_hur_mph_avg, year = Group.1, basin = Group.2, hurricane_avg_max_mph = x)
 
+  #hurricane avg wind in meters per second
   year_hur_ms_avg <- aggregate(x=cnt_hur_temp$max_wind_ms, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
   year_hur_ms_avg <- dplyr::rename(year_hur_ms_avg, year = Group.1, basin = Group.2, hurricane_avg_max_ms = x)
 
+  #count of major hurranes Safer simpson Cat 3,4,5
   cnt_major_temp <- subset(hurr_meta, hurr_meta$max_category >= 3)
   year_major_cnt <- aggregate(x=cnt_major_temp$storm_id, by=list(cnt_major_temp$year, cnt_major_temp$basin),FUN=length)
   year_major_cnt <- dplyr::rename(year_major_cnt, year = Group.1, basin = Group.2, major_hurricane_count = x)
 
+  #Major hurricane avg wind in mpg
   year_major_mph_avg <- aggregate(x=cnt_hur_temp$max_wind_mph, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
   year_major_mph_avg <- dplyr::rename(year_major_mph_avg, year = Group.1, basin = Group.2, major_avg_max_mph = x)
 
+  #Major hurricane avg wind in meters per second
   year_major_ms_avg <- aggregate(x=cnt_hur_temp$max_wind_ms, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
   year_major_ms_avg <- dplyr::rename(year_major_ms_avg, year = Group.1, basin = Group.2, major_avg_max_ms = x)
 
+  #count of intense hurranes Safer simpson Cat 4,5
   cnt_intense_temp <- subset(hurr_meta, hurr_meta$max_category >= 4)
   year_intense_cnt <- aggregate(x=cnt_intense_temp$storm_id, by=list(cnt_intense_temp$year, cnt_intense_temp$basin),FUN=length)
   year_intense_cnt <- dplyr::rename(year_intense_cnt, year = Group.1, basin = Group.2, intense_hurricane_count = x)
 
+  #intense hurricane avg wind in meters per second
   year_intense_mph_avg <- aggregate(x=cnt_hur_temp$max_wind_mph, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
   year_intense_mph_avg <- dplyr::rename(year_intense_mph_avg, year = Group.1, basin = Group.2, intense_avg_max_mph = x)
 
+  #intense hurricane avg wind in MPH
   year_intense_ms_avg <- aggregate(x=cnt_hur_temp$max_wind_ms, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
   year_intense_ms_avg <- dplyr::rename(year_intense_ms_avg, year = Group.1, basin = Group.2, intense_avg_max_ms = x)
 
+  #merge counts into yearly data frame
   year_ace <- merge(x = year_ace, y=year_named_cnt, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_hur_cnt, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_major_cnt, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_intense_cnt, by=c("year", "basin") , all.x = TRUE)
 
+  #merge yearly avg speed into yearly data frame
   year_ace <- merge(x = year_ace, y=year_hur_mph_avg, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_hur_ms_avg, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_major_mph_avg, by=c("year", "basin") , all.x = TRUE)
@@ -350,6 +388,14 @@ create_ace_data <-  function(hurr_meta){
   year_ace <- merge(x = year_ace, y=year_intense_mph_avg, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_intense_ms_avg, by=c("year", "basin") , all.x = TRUE)
 
+  #merge max min statisitics for year
+  year_ace <- merge(x = year_ace, y=year_max_wind_mph, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_max_wind_ms, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_min_pressure, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_max_category, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_max_ace, by=c("year", "basin") , all.x = TRUE)
+
+  #remove temporary datasets
   rm(cnt_major_temp)
   rm(year_named_cnt)
   rm(year_major_mph_avg)
