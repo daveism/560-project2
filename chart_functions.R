@@ -140,6 +140,8 @@ ggBarMaxAll<- function(data, title, xfield, yfield, xlabel, ylabel, source){
   ggplot(data,aes(as.factor(xfield),  yfield)) +
   geom_bar(position = "dodge", stat = "summary", fun.y = "max",
            fill="#b2ddf2", color="#b2ddf2", size = .5) +
+           geom_smooth(method = "lm",color="#008fd5",se=0) +
+
   scale_x_discrete(
                   breaks = b_breaks,
                   labels = b_labels) +
@@ -167,7 +169,7 @@ ggBarYear<- function(data, title, xfield, yfield, xlabel, ylabel, source){
 
   #adjust per basin
   if (str_sub(xfield[1], -1, -1) == 2){
-    b_breaks = c(1850, 1900, 19300, 1950, 1960, 1970, 1980,  1990, 2000, 2010)
+    b_breaks = c(1850, 1900, 1930, 1950, 1960, 1970, 1980,  1990, 2000, 2010)
     b_labels = c("1850", "1900", "1930", "1950", "1960", "1970", "1980", "1990", "2000", "2010")
   }
 
@@ -177,7 +179,6 @@ ggBarYear<- function(data, title, xfield, yfield, xlabel, ylabel, source){
   scale_x_discrete(
                   breaks = b_breaks,
                   labels = b_labels) +
-
   theme_minimal(base_size=theme_base_size) +
    labs(title= paste(title),
         subtitle="",

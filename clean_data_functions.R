@@ -241,13 +241,11 @@ append_meta_data <- function(hurr_obs, hurr_meta){
 
   #calculate ace for storm
   ace_sub <-  subset(hurr_obs, hurr_obs$status_code == 'SS' |  hurr_obs$status_code == 'HU' |  hurr_obs$status_code == 'TS')
-  #ace_sub <- subset(ace_sub, ace_sub$storm_name != 'UNNAMED')
   ace_sub <-  subset(ace_sub, ace_sub$wind_mph > 39)
   ace_sub <- subset(ace_sub, ace_sub$time == '0000' |  ace_sub$time == '0600' |  ace_sub$time == '1200' |  ace_sub$time == '1800')
   storm_ace <- aggregate(x=ace_sub$wind_knts_sq, by=list(ace_sub$storm_id, ace_sub$year),FUN=sum, na.rm=TRUE, na.action=NULL)
   storm_ace$ace <- 10^-4*(storm_ace$x)
   storm_ace <- dplyr::rename(storm_ace,  storm_id = Group.1, aceyear = Group.2, sum_of_sq_knts = x)
-
 
   hurr_meta <- merge(x = hurr_meta, y=storm_max_wind, by=c("storm_id") , all.x = TRUE)
   hurr_meta <- merge(x = hurr_meta, y=storm_max_wind_ms, by=c("storm_id") , all.x = TRUE)
@@ -283,13 +281,11 @@ append_obs_data <- function(hurr_obs, hurr_meta){
 
   #calculate ace for storm
   ace_sub <-  subset(hurr_obs, hurr_obs$status_code == 'SS' |  hurr_obs$status_code == 'HU' |  hurr_obs$status_code == 'TS')
-  #ace_sub <- subset(ace_sub, ace_sub$storm_name != 'UNNAMED')
   ace_sub <-  subset(ace_sub, ace_sub$wind_mph > 39)
   ace_sub <- subset(ace_sub, ace_sub$time == '0000' |  ace_sub$time == '0600' |  ace_sub$time == '1200' |  ace_sub$time == '1800')
   storm_ace <- aggregate(x=ace_sub$wind_knts_sq, by=list(ace_sub$storm_id, ace_sub$year),FUN=sum, na.rm=TRUE, na.action=NULL)
   storm_ace$ace <- 10^-4*(storm_ace$x)
   storm_ace <- dplyr::rename(storm_ace,  storm_id = Group.1, aceyear = Group.2, sum_of_sq_knts = x)
-
 
   hurr_obs <- merge(x = hurr_obs, y=storm_max_wind, by=c("storm_id") , all.x = TRUE)
   hurr_obs <- merge(x = hurr_obs, y=storm_max_wind_ms, by=c("storm_id") , all.x = TRUE)
