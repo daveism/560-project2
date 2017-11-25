@@ -53,11 +53,15 @@ year_ace <- read.csv("data/hurricanes_yearly_ace.csv")
 
 year_ace_named_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & year_ace$max_category >= 3 & year_ace$year > 1975)
 
+year_ace_hurr_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & year_ace$max_category >= 1 & year_ace$year > 1975)
+
 year_ace_major_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & year_ace$max_category >= 3 & year_ace$year > 1975)
 
 year_ace_intense_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & year_ace$max_category >= 4 & year_ace$year > 1975)
 
 hurr_meta_named_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hurr_meta$year >= 1975 & !is.na(hurr_meta$ace) )
+
+hurr_meta_hurr_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic" & hurr_meta$max_category >= 1 & hurr_meta$year >= 1975)
   
 hurr_meta_major_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic" & hurr_meta$max_category >= 3 & hurr_meta$year >= 1975)
 
@@ -97,6 +101,7 @@ ggplot(hurr_meta_intense_wa, aes(year, ace)) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12, legend.position="bottom")
 
+#grid.arrange(p1, p2, p3, ncol = 1, nrow = 3,  widths=1:1)
 
 
 ```

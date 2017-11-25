@@ -3,7 +3,7 @@ year_ace_wa <- subset(year_ace, year_ace$basin == "Western Atlantic")
 g <- ggplot(year_ace_wa, aes(year))
 g + geom_bar()
 
-hurr_meta_intense_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic" & hurr_meta$max_category >= 4 & hurr_meta$year >= 1960)
+hurr_meta_intense_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic" & hurr_meta$max_category >= 4 & hurr_meta$year >= 1975)
 
 #over all
 #ace chart
@@ -26,9 +26,9 @@ ggplot(hurr_meta_intense_wa, aes(year, max_wind_mph)) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12)
 
 
-  ggplot(hurr_meta_intense_wa, aes(year, max_wind_ms)) +
-    geom_smooth(aes(x=year, y=max_wind_ms, group = 1) , method = "lm",color="#008fd5",se=0) +
-    geom_point(aes(size=max_wind_ms, color=as.character(max_category)), alpha=3/4) +
+  ggplot(hurr_meta_intense_wa, aes(year, log(max_wind_ms))) +
+    geom_smooth(aes(x=year, y=log(max_wind_ms), group = 1) , method = "lm",color="#008fd5",se=0) +
+    geom_point(aes(size=log(max_wind_ms), color=as.character(max_category)), alpha=3/4) +
     scale_color_manual(breaks = c("4", "5"),values=c("orange","red")) +
     ggtitle("Intense Hurricanes by Max Wind in M/S") +
     coord_equal() +
@@ -53,11 +53,56 @@ ggplot(data=year_ace_wa, aes(x=year, y=ace, group = 1)) +
    ggplot(year_ace_wa, aes(year, ace)) +
      geom_smooth(aes(x=year, y=ace, group = 1) , method = "lm",color="#008fd5",se=0) +
      geom_point(aes(size=ace, color=as.character(max_category)), alpha=3/4) +
-     scale_color_manual(breaks = c("4", "5"),values=c("orange","red")) +
+     # scale_color_manual(breaks = c("4", "5"),values=c("orange","red")) +
      ggtitle("Intense Hurricanes by ACE score ") +
      coord_equal() +
      theme_bw() +
      theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12)
+
+     year_ace_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & max_category >= 4 & year > 1975)
+
+     ggplot(year_ace_wa, aes(year, intense_ace)) +
+       geom_smooth(aes(x=year, y=intense_ace, group = 1) , method = "lm",color="#008fd5",se=0) +
+       geom_point(aes(size=intense_ace, color=as.character(max_category)), alpha=3/4) +
+       # scale_color_manual(breaks = c("4", "5"),values=c("orange","red")) +
+       ggtitle("Intense Hurricanes by ACE score ") +
+       coord_equal() +
+       theme_bw() +
+       theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12)
+
+       ggplot(year_ace_wa, aes(year, max_wind_ms)) +
+         geom_smooth(aes(x=year, y=max_wind_ms, group = 1) , method = "lm",color="#008fd5",se=0) +
+         geom_point(aes(size=max_wind_ms, color=as.character(max_category)), alpha=3/4) +
+         # scale_color_manual(breaks = c("4", "5"),values=c("orange","red")) +
+         ggtitle("Intense Hurricanes by max wind M/S") +
+         coord_equal() +
+         theme_bw() +
+         theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12)
+
+
+
+     year_ace_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & max_category >= 3 & year > 1975)
+
+     ggplot(year_ace_wa, aes(year, intense_ace)) +
+       geom_smooth(aes(x=year, y=intense_ace, group = 1) , method = "lm",color="#008fd5",se=0) +
+       geom_point(aes(size=intense_ace, color=as.character(max_category)), alpha=3/4) +
+       # scale_color_manual(breaks = c("4", "5"),values=c("orange","red")) +
+       ggtitle("Intense Hurricanes by ACE score ") +
+       coord_equal() +
+       theme_bw() +
+       theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12)
+
+       ggplot(year_ace_wa, aes(year, log(max_wind_ms))) +
+         geom_smooth(aes(x=year, y=log(max_wind_ms), group = 1) , method = "lm",color="#008fd5",se=0) +
+         geom_point(aes(size=log(max_wind_ms), color=as.character(max_category)), alpha=3/4) +
+         # scale_color_manual(breaks = c("4", "5"),values=c("orange","red")) +
+         ggtitle("Intense Hurricanes by max wind M/S ") +
+         coord_equal() +
+         theme_bw() +
+         theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12)
+
+
+
 
    ggplot(hurr_
 

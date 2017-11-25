@@ -238,6 +238,7 @@ append_meta_data <- function(hurr_obs, hurr_meta){
   ace_sub <- subset(ace_sub, ace_sub$time == '0000' |  ace_sub$time == '0600' |  ace_sub$time == '1200' |  ace_sub$time == '1800')
   storm_ace <- aggregate(x=ace_sub$wind_knts_sq, by=list(ace_sub$storm_id, ace_sub$year),FUN=sum, na.rm=TRUE, na.action=NULL)
   storm_ace$ace <- 10^-4*(storm_ace$x)
+  storm_ace$named <- 1
   storm_ace <- dplyr::rename(storm_ace,  storm_id = Group.1, aceyear = Group.2, sum_of_sq_knts = x)
 
   hurr_meta <- merge(x = hurr_meta, y=storm_max_wind, by=c("storm_id") , all.x = TRUE)
@@ -247,6 +248,20 @@ append_meta_data <- function(hurr_obs, hurr_meta){
   hurr_meta <- merge(x = hurr_meta, y=storm_ace, by=c("storm_id") , all.x = TRUE)
 
   hurr_obs <- merge(x = hurr_obs, y=storm_max_category, by=c("storm_id") , all.x = TRUE)
+
+  #add hur, major, intense
+  hurr_meta$hurricane <- ifelse(hurr_meta$max_category == "5", 1,
+                       ifelse(hurr_obs$max_category == "4", 1,
+                       ifelse(hurr_obs$max_category == "3", 1,
+                       ifelse(hurr_obs$max_category == "2", 1,
+                       ifelse(hurr_obs$max_category == "1", 1, NA)))))
+
+  hurr_meta$hurricane_major <- ifelse(hurr_meta$max_category == "5", 1,
+                      ifelse(hurr_obs$max_category == "4", 1,
+                      ifelse(hurr_obs$max_category == "3", 1,  NA)))
+
+  hurr_meta$hurricane_intense <- ifelse(hurr_meta$max_category == "5", 1,
+                     ifelse(hurr_obs$max_category == "4", 1, NA))
 
  return(hurr_meta)
 
@@ -297,6 +312,21 @@ create_ace_data <-  function(hurr_meta){
   year_ace <- dplyr::rename(year_ace, year = Group.1, basin = Group.2, ace = x)
   year_ace$year <- as.numeric(year_ace$year)
 
+  year_ace_hurr <- subset(hurr_meta, hurricane == 1 )
+  year_ace_hurr <- aggregate(x=  year_ace_hurr$ace, by=list(  year_ace_hurr$year,   year_ace_hurr$basin),FUN=sum, na.rm=TRUE, na.action=NULL)
+  year_ace_hurr <- dplyr::rename(year_ace_hurr, year = Group.1, basin = Group.2, hurr_ace = x)
+  year_ace_hurr$year <- as.numeric(year_ace_hurr$year)
+
+  year_ace_major <- subset(hurr_meta, hurricane_major== 1 )
+  year_ace_major <- aggregate(x=  year_ace_major$ace, by=list(  year_ace_major$year,   year_ace_major$basin),FUN=sum, na.rm=TRUE, na.action=NULL)
+  year_ace_major <- dplyr::rename(year_ace_major, year = Group.1, basin = Group.2, major_ace = x)
+  year_ace_major$year <- as.numeric(year_ace_major$year)
+
+  year_ace_intense <- subset(hurr_meta, hurricane_intense == 1 )
+  year_ace_intense <- aggregate(x=  year_ace_intense$ace, by=list(  year_ace_intense$year,   year_ace_intense$basin),FUN=sum, na.rm=TRUE, na.action=NULL)
+  year_ace_intense <- dplyr::rename(year_ace_intense, year = Group.1, basin = Group.2, intense_ace = x)
+  year_ace_intense$year <- as.numeric(year_ace_intense$year)
+
   #get max wind mph, max wind meters per second, max category, and min pressure for year
   year_max_wind_mph <- aggregate(x=hurr_meta$max_wind_mph, by=list(hurr_meta$year, hurr_meta$basin),FUN=max, na.rm=TRUE, na.action=NULL)
   year_max_wind_ms <- aggregate(x=hurr_meta$max_wind_ms, by=list(hurr_meta$year, hurr_meta$basin),FUN=max, na.rm=TRUE, na.action=NULL)
@@ -304,7 +334,7 @@ create_ace_data <-  function(hurr_meta){
   year_max_category <- aggregate(x=hurr_meta$max_category, by=list(hurr_meta$year, hurr_meta$basin),FUN=max, na.rm=TRUE, na.action=NULL)
   year_max_ace <- aggregate(x=hurr_meta$ace, by=list(hurr_meta$year, hurr_meta$basin),FUN=max, na.rm=TRUE, na.action=NULL)
 
-  #fix inf so merger is sucessfull
+  #fix inf so merge is sucessfull
   year_max_wind_mph[mapply(is.infinite, year_max_wind_mph)] <- NA
   year_max_wind_ms[mapply(is.infinite, year_max_wind_ms)] <- NA
   year_min_pressure[mapply(is.infinite, year_min_pressure)] <- NA
@@ -331,7 +361,7 @@ create_ace_data <-  function(hurr_meta){
   year_max_ace$max_ace <- as.numeric(year_max_ace$max_ace)
 
   #NAMED stomr count used by ACE TS, Hurricanes, and Subtropical.  Winds > 39 mph
-  cnt_named_temp <- subset(hurr_meta, hurr_meta$max_wind_mph > 39)
+  cnt_named_temp <- subset(hurr_meta, hurr_meta$max_wind_mph > 39 & hurr_meta$named )
   year_named_cnt <- aggregate(x=cnt_named_temp$storm_id, by=list(cnt_named_temp$year, cnt_named_temp$basin),FUN=length)
   year_named_cnt <- dplyr::rename(year_named_cnt, year = Group.1, basin = Group.2, named_count = x)
 
@@ -374,11 +404,17 @@ create_ace_data <-  function(hurr_meta){
   year_intense_ms_avg <- aggregate(x=cnt_hur_temp$max_wind_ms, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
   year_intense_ms_avg <- dplyr::rename(year_intense_ms_avg, year = Group.1, basin = Group.2, intense_avg_max_ms = x)
 
+  #meger ace into yearly data frame
+  year_ace <- merge(x = year_ace, y=year_ace_hurr, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_ace_major, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_ace_intense, by=c("year", "basin") , all.x = TRUE)
+
   #merge counts into yearly data frame
   year_ace <- merge(x = year_ace, y=year_named_cnt, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_hur_cnt, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_major_cnt, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_intense_cnt, by=c("year", "basin") , all.x = TRUE)
+
 
   #merge yearly avg speed into yearly data frame
   year_ace <- merge(x = year_ace, y=year_hur_mph_avg, by=c("year", "basin") , all.x = TRUE)
