@@ -14,6 +14,8 @@ if (!is.installed("maps")){ install.packages("maps") }
 if (!is.installed("maptools")){ install.packages("maptools") }
 if (!is.installed("sp")){ install.packages("sp") }
 if (!is.installed("leaflet")){ install.packages("leaflet") }
+if (!is.installed("gridExtra")){ install.packages("gridExtra") }
+
 
 #add refrence to library
 library(stringr)
@@ -26,4 +28,6 @@ library(maptools)
 library(maps)
 library(sp)
 library(leaflet)
+library(gridExtra)
+
 options(scipen = 999)

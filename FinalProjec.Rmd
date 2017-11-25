@@ -1,7 +1,13 @@
 ---
-title: Are intense hurricanse hurricnes become more intense?
-output: html_document
+title: "Are intense hurricanse hurricnes become more intense?"
+output:
+  word_document: default
+  html_document:
+    fig_caption: yes
 ---
+```{r  include=FALSE}
+source("install.R")
+```
 
 # Introduction
 
@@ -32,12 +38,81 @@ Note: To follow along with R code please download the code () and run the r scri
 
 The basis for all our work will be getting data from Hurdat2 data from NOAA.  The hurdat2 data is reanalyixed and fixed for accuracy (http://www.aoml.noaa.gov/hrd/hurdat/hurdat_pub.html ref) so it should be fairly accurate, althought the latest year (2017) we not be availlable until 2018.  First we need to calculate both ace and LMI.  
 
+### ACE
 The formulat for ACE is expressed as:
 
 $$ACE=10^{-4}\sum v_{\max}^{2}$$
 vmax is the maximum sustained wind speed in knots. Sum refers to the sum of all observatiosn every 6 hours starting at 0000 and for the entire life of the storm as long as at meets the qualifiucations of Subtropical, Tropical Storm, Hurricane status while winds are greater than 39 mph.
 
-for non math people that formula can be expresed as (show link to github code ) or as where hurr_obs is the data frame containing all hurricane observations (hurdata2 - ref)
+for non math people that formula in R can be found here (show link to github code ) or as where hurr_obs is the data frame containing all hurricane observations (hurdata2 - ref)
+
+```{r  include=FALSE}
+hurr_meta <- read.csv("data/hurricanes_summary.csv")
+hurr_obs <- read.csv("data/hurricanes_detail.csv")
+year_ace <- read.csv("data/hurricanes_yearly_ace.csv")
+
+year_ace_named_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & year_ace$max_category >= 3 & year_ace$year > 1975)
+
+year_ace_major_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & year_ace$max_category >= 3 & year_ace$year > 1975)
+
+year_ace_intense_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & year_ace$max_category >= 4 & year_ace$year > 1975)
+
+hurr_meta_named_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hurr_meta$year >= 1975 & !is.na(hurr_meta$ace) )
+  
+hurr_meta_major_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic" & hurr_meta$max_category >= 3 & hurr_meta$year >= 1975)
+
+hurr_meta_intense_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic" & hurr_meta$max_category >= 4 & hurr_meta$year >= 1975)
+```
+
+```{r, fig.cap=paste("figure 1. ACE score for storms occuring 1975-1980")}
+
+ggplot(hurr_meta_named_wa, aes(year, ace)) +
+  geom_smooth(aes(x=year, y=ace, group = 1) , method = "lm",color="#008fd5",se=0) +
+  geom_point(aes(size=ace, color=as.character(max_category)), alpha=3/4) +
+  scale_color_manual(breaks = c("1", "2", "3", "4", "5"),values=c("yellow", "yellow", "yellow", "orange", "red")) + 
+  labs(size = "ACE Score", color = "Category" ) +
+  ggtitle("Named Storms and ACE score by Year") +
+  coord_equal() +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12, legend.position="bottom")
+
+ggplot(hurr_meta_major_wa, aes(year, ace)) +
+  geom_smooth(aes(x=year, y=ace, group = 1) , method = "lm",color="#008fd5",se=0) +
+  geom_point(aes(size=ace, color=as.character(max_category)), alpha=3/4) +
+  scale_color_manual(breaks = c("3", "4", "5"),values=c("yellow", "orange", "red")) +
+  labs(size = "ACE Score", color = "Category" ) +
+    ggtitle("Major Hurricanes and ACE score by Year") +
+  coord_equal() +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12, legend.position="bottom")
+
+
+ggplot(hurr_meta_intense_wa, aes(year, ace)) +
+  geom_smooth(aes(x=year, y=ace, group = 1) , method = "lm",color="#008fd5",se=0) +
+  geom_point(aes(size=ace, color=as.character(max_category)), alpha=3/4) +
+  scale_color_manual(breaks = c("4", "5"),values=c("orange","red")) +
+  labs(size = "ACE Score", color = "Category" ) +
+    ggtitle("Intense Hurricanes and ACE score by Year") +
+  coord_equal() +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12, legend.position="bottom")
+
+
+
+```
+
+```{r, fig.cap=paste("figure 1. Total ACE score by year 1975-1980")}
+
+   ggplot(year_ace_intense_wa, aes(year, ace)) +
+     geom_smooth(aes(x=year, y=ace, group = 1) , method = "lm",color="#008fd5",se=0) +
+     geom_point(aes(size=ace, color=as.character(max_category)), alpha=3/4) +
+    scale_color_manual(breaks = c("3", "4", "5"),values=c("yellow", "orange", "red")) +
+     ggtitle("Total ACE score by year") +
+     coord_equal() +
+     theme_bw() +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12)
+
+```
 
 ```{r}
 
@@ -58,13 +133,58 @@ for non math people that formula can be expresed as (show link to github code ) 
 #sum_wind_knots <- aggregate(x=ace_sub$wind_knts_sq, by=list(ace_sub$storm_id, ace_sub$year),FUN=sum, na.rm=TRUE, na.action=NULL)
 
 #multiple by 10 to -4 power. 
-#storm_ace$ace <- 10^-4*(storm_ace$x)
+#storm_ace$ace <- 10^-4*(sum_wind_knots$x)
 
 
 ```
 
-
+### LMI
 The calculation LMI as max winds for meters per second. Is a lot simpler.  Hurdat2 data has sustianed winds in knots. so a simple converion of knots to meters per second is all that is needed.  (add formula). using our data this can be expresed as 
+
+```{r, fig.cap=paste("figure 2. Max Wind M/S by intense storms 1975-1980")}
+
+ ggplot(hurr_meta_intense_wa, aes(year, log(max_wind_ms))) +
+    geom_smooth(aes(x=year, y=log(max_wind_ms), group = 1) , method = "lm",color="#008fd5",se=0) +
+    geom_point(aes(size=log(max_wind_ms), color=as.character(max_category)), alpha=3/4) +
+    scale_color_manual(breaks = c("4", "5"),values=c("orange", "red")) +
+    ggtitle("Intense Hurricanes by Max Wind in M/S") +
+    coord_equal() +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12, legend.position="none")
+
+
+
+#grid.arrange(p1, p2, ncol = 1)
+
+
+```
+
+```{r}
+
+ggplot(year_ace_intense_wa, aes(year, log(max_wind_ms))) +
+     geom_smooth(aes(x=year, y=log(max_wind_ms), group = 1) , method = "lm",color="#008fd5",se=0) +
+     geom_point(aes(size=log(max_wind_ms), color=as.character(max_category)), alpha=3/4) +
+    scale_color_manual(breaks = c("3","4", "5"),values=c("yellow","orange","red")) +
+     ggtitle("Max wind as M/S by year") +
+     coord_equal() +
+     theme_bw() +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12, legend.position="bottom")
+```
+
+```{r, fig.cap=paste("figure 1. Total ACE score by year 1975-1980")}
+
+   ggplot(year_ace_major_wa, aes(year, log(max_wind_ms))) +
+     geom_smooth(aes(x=year, y=log(max_wind_ms), group = 1) , method = "lm",color="#008fd5",se=0) +
+     geom_point(aes(size=log(max_wind_ms), color=as.character(max_category)), alpha=3/4) +
+    scale_color_manual(breaks = c("3","4", "5"),values=c("yellow","orange","red")) +
+     ggtitle("Max wind as M/S by year") +
+     coord_equal() +
+     theme_bw() +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12)
+
+```
+
+
 ```{r}
 #hurr_obs$wind_meters_per_second <- as.numeric(as.numeric(hurr_obs$wind_knts) * 0.5144)
 

@@ -50,6 +50,17 @@ ggplot(data=year_ace_wa, aes(x=year, y=ace, group = 1)) +
    geom_smooth(method = "lm",color="#008fd5",se=0) +
    geom_point()
 
+   ggplot(year_ace_wa, aes(year, ace)) +
+     geom_smooth(aes(x=year, y=ace, group = 1) , method = "lm",color="#008fd5",se=0) +
+     geom_point(aes(size=ace, color=as.character(max_category)), alpha=3/4) +
+     scale_color_manual(breaks = c("4", "5"),values=c("orange","red")) +
+     ggtitle("Intense Hurricanes by ACE score ") +
+     coord_equal() +
+     theme_bw() +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12)
+
+   ggplot(hurr_
+
    ggplot(data=year_ace_wa, aes(x=year, y=log(intense_avg_max_ms), group = 1)) +
       geom_line() +
       geom_smooth(method = "lm",color="#008fd5",se=0) +
