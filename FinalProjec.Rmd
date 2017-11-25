@@ -7,21 +7,85 @@ output:
 ---
 ```{r  include=FALSE}
 source("install.R")
+source("chart_functions.R")
+
+#image defaults
+theme_base_size <- 9
+image_width <- 4
+image_xwidth <- 5
+image_height <- 3
+
+hurr_meta <- read.csv("data/hurricanes_summary.csv")
+hurr_obs <- read.csv("data/hurricanes_detail.csv")
+year_ace <- read.csv("data/hurricanes_yearly_ace.csv")
+
 ```
 
 # Introduction
 
-There has been a lot of work around hurricanes and what will happen as our climate changes and warms.  Current research is showing that the number of hurricances has not really changed (get reference).  (add counts of named storms, hurricanes,  major, and intense). In fact some reaserch indicates that due to shifting wind patterns associated with global warming there might be fewer storms.  
+There has been a lot of work around hurricanes and what will happen as our climate changes and warms.  Current research is showing that the number of hurricances has not really changed (get reference). In fact some reaserch indicates that due to shifting wind patterns associated with global warming there might be fewer storms (get ref).  
 
-However it appears that there might be some increases in intensity (ar15 and new climate report).  One of the typical measures of the intensity of a tropical strom is maximun sustained winds, (get definuiation and ref). The focus on this paper will be to investigate that the winds are getting just a bit more intense for intense hurricanes.
+However some research is indicating there might be increases in intensity (ar15 and new climate report).  One of the typical measures of the intensity of a tropical strom is maximun sustained winds, (get definuiation and ref). The focus on this research is to investigate if maximum winds are getting just a bit more intense for intense hurricanes.
+
+```{r  include=FALSE}
+
+year_ace_wa <- subset(year_ace, year_ace$basin == "Western Atlantic")
+
+barcount <- ggBarYear(year_ace_wa, "Total Named", year_ace_wa$year, year_ace_wa$named_count, "Year", "Count", "NOAA - Hurrdat2 data")
+```
+
+```{r}
+barcount
+```
 
 There are serveral measures of intensity,  since my focys is wind based I will look at two differen measurements of intensity for storms Accul (ACE) (get refence). ref to noaa website showing calculation parameters and wikipedia calulations Show ace fomration.
 
-The second measurement we will use is max winds for meters per second.(ref) which is used in many studies and is sometimes refered to as Lifetime Maxuimom Intensity (LMI). 
+```{r  include=FALSE}
+year_ace_wa <- subset(year_ace, year_ace$basin == "Western Atlantic")
+singlecols <- c("All Storms" = "darkorange2")
 
-When investigating intensity and winds there are potential issues with hurricane data specilfically with how it was collected pre and post satetlaite error (date ?) (add ref) because of these issues I will look at the entire history but the conclusions will be drawn on post stateliate and speciacally after the dovak technique was developed (add ref).  This does pose some issues with limiting the historical record, but it is out of the scope of this paper to invesitate issues with the observatiosn.  There is also ecvendce the dovark technique has some underestimates in the early 1980 (ref landsea).  As a result Many research proejcts have focused on more recent trends late 80;s rearly 90s to early 2010's due to this cahnge in observations and how hard it is overcome.  Basically there is no good way to compare the differences of the pre and post satelte eras when estiamtiung wind speed in the hirstoraical tropical cyclone records. (ref)
 
-It also seems that the north atlantic has some of the best observations (ref) so we will limit the investigation to this area of the world.  
+#ACE for all all stroms all years
+all_ace <- ggplot() +
+   geom_line(data=year_ace_wa, aes(x=year, y=ace, group = 1, colour="All Storms")) +
+   geom_point(data=year_ace_wa, aes(x=year, y=ace, group = 1, size=ace), color="darkorange2", alpha=3/4) +
+    labs(size = "ACE", color = "Storms" ) +
+
+   geom_smooth(data=year_ace_wa, aes(x=year, y=ace, group = 1), method = "lm",color="darkorange3",se=0) +
+    scale_colour_manual( values = singlecols) +
+
+   coord_equal() +
+   theme_minimal(base_size=theme_base_size) +
+   labs(
+     title = "ACE Score's since 1850",
+        x = "Year",
+        y = "ACE",
+      caption=paste("Source:","NOAA - Hurrdat2 data")) +
+
+   theme(axis.text.x = element_text(angle = 90, hjust = 1) ,
+         aspect.ratio = 8/12,
+         legend.position = "bottom",
+         legend.key.width = unit(1,"line"),
+         legend.key.height = unit(1,"line"),
+         plot.subtitle = element_text(color="#666666"),
+         plot.caption = element_text(color="#AAAAAA", size=6),
+         legend.text=element_text(size=6),
+         legend.title=element_text(size=6)
+       )
+
+
+```
+
+```{r}
+all_ace
+```
+
+The second measurement we will use is max winds for meters per second.(ref) The meters per second is used in many studies and when looking at the max wind of a storm this is refered to as Lifetime Maxuimom Intensity (LMI). 
+
+
+When investigating intensity and winds there are potential issues with hurricane data specilfically with how it was collected pre and post satetlaite error (date ?) (add ref) because of these issues I will look at the entire history but the conclusions will be drawn on post stateliate and speciacally after the dovak technique was developed (add ref).  This does pose some issues with limiting the historical record, but it is out of the scope of this paper to invesitate issues with the observatiosn.  There is also ecvendce the dovark technique has some underestimates in the early 1980 (ref landsea).  As a result Many research proejcts have focused on more recent trends late 80;s rearly 90s to early 2010's due to this cahnge in observations and how hard it is overcome.  Evidently there is no good way to compare the differences of the pre and post satelte eras when estiamtiung wind speed in the hirstoraical tropical cyclone records. (ref) Following this I will also limit my reasearch to 1980 on.
+
+It also seems that the north atlantic has some of the most accuate historical observations (ref) so we will limit the investigation to this area of the world.  
 
 for both ACE and LMI i will look at four types of storms named storms, used by ace (noaa ref) defined as  Subtropical storms, Tropical Storms, and Hurricanes all with winds greator than 39 mph. Hurricanes, Majpr Hurricanes category 3 or greator, and Intense Hurricanes category 4 or greator.  this should start to indicate if indeed intense storms are getting just a bit more intense.
 
@@ -51,73 +115,132 @@ hurr_meta <- read.csv("data/hurricanes_summary.csv")
 hurr_obs <- read.csv("data/hurricanes_detail.csv")
 year_ace <- read.csv("data/hurricanes_yearly_ace.csv")
 
-year_ace_named_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & year_ace$max_category >= 3 & year_ace$year > 1975)
+#year data
+year_ace_named_wa <- subset(year_ace, year_ace$basin == "Western Atlantic"  & year_ace$year >= 1980 & !is.na(year_ace$ace))
 
-year_ace_hurr_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & year_ace$max_category >= 1 & year_ace$year > 1975)
+year_ace_hurr_wa <- subset(year_ace, year_ace$basin == "Western Atlantic"  & year_ace$year >= 1980   & !is.na(year_ace$hurr_ace))
 
-year_ace_major_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & year_ace$max_category >= 3 & year_ace$year > 1975)
+year_ace_major_wa <- subset(year_ace, year_ace$basin == "Western Atlantic"  & year_ace$year >= 1980   & !is.na(year_ace$major_ace))
 
-year_ace_intense_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" & year_ace$max_category >= 4 & year_ace$year > 1975)
+year_ace_intense_wa <- subset(year_ace, year_ace$basin == "Western Atlantic"  & year_ace$year >= 1980   & !is.na(year_ace$intense_ace))
 
-hurr_meta_named_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hurr_meta$year >= 1975 & !is.na(hurr_meta$ace) )
+#for naming 
+cols <- c("Named Storms" = "gray", "Hurricanes" = "yellow", "Major Hurricanes" = "darkorange2","Intense Hurricanes" = "firebrick1")
 
-hurr_meta_hurr_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic" & hurr_meta$max_category >= 1 & hurr_meta$year >= 1975)
-  
-hurr_meta_major_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic" & hurr_meta$max_category >= 3 & hurr_meta$year >= 1975)
+b_breaks = c("1980", "1985", "1990", "1995", "2000",  "2005", "2010", "2015" )
+b_labels = c("1980", "1985", "1990", "1995", "2000",  "2005", "2010", "2015" )
 
-hurr_meta_intense_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic" & hurr_meta$max_category >= 4 & hurr_meta$year >= 1975)
+cols2 <- c("Named" = "gray", "Hurricanes" = "yellow", "Major" = "darkorange2","Intense" = "firebrick1")
+
+#Yearly ACE
+year_ace_plot <- 
+ggplot() +
+   #lines
+   geom_line(data=year_ace_named_wa, aes(x=as.factor(year), y=ace, group = 1, colour="Named")) +
+   geom_line(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurr_ace, group = 2, colour="Hurricanes")) +
+   geom_line(data=year_ace_major_wa, aes(x=as.factor(year), y=major_ace, group = 3, colour="Major")) +
+   geom_line(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_ace, group = 4, colour="Intense")) +
+    scale_colour_manual( values = cols2) +
+
+   #points
+   geom_point(data=year_ace_named_wa, aes(x=as.factor(year), y=ace, group = 1, size=ace), color="gray") +
+   geom_point(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurr_ace, group = 2, size=ace), color="yellow") +
+   geom_point(data=year_ace_major_wa, aes(x=as.factor(year), y=major_ace, group = 3, size=ace), color="darkorange2") +
+   geom_point(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_ace, group = 4, size=ace), color="firebrick1") +
+    labs(size = "ACE", color = "Storm" ) +
+    scale_x_discrete(breaks = b_breaks,labels = b_labels) +
+
+   #Smoothed Lines
+   geom_smooth(data=year_ace_named_wa, aes(x=as.factor(year), y=ace, group = 1), method = "lm",color="darkgray",se=0) +
+   geom_smooth(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurr_ace, group = 2), method = "lm",color="yellow2",se=0) +
+   geom_smooth(data=year_ace_major_wa, aes(x=as.factor(year), y=major_ace, group = 3), method = "lm",color="darkorange3",se=0) +
+   geom_smooth(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_ace, group = 4), method = "lm",color="firebrick",se=0) +
+
+   coord_equal() +
+   theme_minimal(base_size=theme_base_size) +
+
+   labs(
+     title = "ACE Score's since 1980",
+        x = "Year",
+        y = "ACE",
+      caption=paste("Source:","NOAA - Hurrdat2 data")) +
+
+   theme(axis.text.x = element_text(angle = 90, hjust = 1) ,
+         aspect.ratio = 8/12,
+         legend.position = "bottom",
+         legend.key.width = unit(1,"line"),
+         legend.key.height = unit(1,"line"),
+         plot.subtitle = element_text(color="#666666"),
+         plot.caption = element_text(color="#AAAAAA", size=6),
+         legend.text=element_text(size=6),
+         legend.title=element_text(size=6)
+       )
+
+
+ #Yearly Mean Max Wind Speed
+ year_mean_plot <-  ggplot() +
+
+    #lines
+    geom_line(data=year_ace_named_wa, aes(x=as.factor(year), y=named_avg_max_ms, group = 1, colour="Named")) +
+    geom_line(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurricane_avg_max_ms, group = 2, colour="Hurricanes")) +
+    geom_line(data=year_ace_major_wa, aes(x=as.factor(year), y=major_avg_max_ms, group = 3, colour="Major")) +
+    geom_line(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_avg_max_ms, group = 4, colour="Intense")) +
+     scale_colour_manual( values = cols2) +
+     guides(fill=guide_legend(ncol=2)) +
+
+    #points
+    geom_point(data=year_ace_named_wa, aes(x=as.factor(year), y=named_avg_max_ms, group = 1, size=named_avg_max_ms), color="gray") +
+    geom_point(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurricane_avg_max_ms, group = 2, size=hurricane_avg_max_ms), color="yellow") +
+    geom_point(data=year_ace_major_wa, aes(x=as.factor(year), y=major_avg_max_ms, group = 3, size=major_avg_max_ms), color="darkorange2") +
+    geom_point(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_avg_max_ms, group = 4, size=intense_avg_max_ms), color="firebrick1") +
+     labs(size = "M/S", color = "Storm" ) +
+     scale_x_discrete(breaks = b_breaks,labels = b_labels) +
+
+    #Smoothed Lines
+    geom_smooth(data=year_ace_named_wa, aes(x=as.factor(year), y=named_avg_max_ms, group = 1), method = "lm",color="darkgray",se=0) +
+    geom_smooth(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurricane_avg_max_ms, group = 2), method = "lm",color="yellow2",se=0) +
+    geom_smooth(data=year_ace_major_wa, aes(x=as.factor(year), y=major_avg_max_ms, group = 3), method = "lm",color="darkorange3",se=0) +
+    geom_smooth(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_avg_max_ms, group = 4), method = "lm",color="firebrick",se=0) +
+
+    coord_equal() +
+    theme_minimal(base_size=theme_base_size) +
+
+    labs(
+      title = "Mean Max Wind Speed M/S Since 1980",
+         x = "Year",
+         y = "Max Wind Speed M/S",
+       caption=paste("Source:","NOAA - Hurrdat2 data")) +
+
+    theme(axis.text.x = element_text(angle = 90, hjust = 1) ,
+          aspect.ratio = 8/12,
+          legend.position = "bottom",
+          legend.key.width = unit(1,"line"),
+          legend.key.height = unit(1,"line"),
+          plot.subtitle = element_text(color="#666666"),
+          plot.caption = element_text(color="#AAAAAA", size=6),
+          legend.text=element_text(size=6),
+          legend.title=element_text(size=6)
+        )
+
 ```
 
-```{r, fig.cap=paste("figure 1. ACE score for storms occuring 1975-1980")}
+```{r, fig.cap=paste("Figure 1. ACE Score for storms occuring 1980-2016")}
 
-ggplot(hurr_meta_named_wa, aes(year, ace)) +
-  geom_smooth(aes(x=year, y=ace, group = 1) , method = "lm",color="#008fd5",se=0) +
-  geom_point(aes(size=ace, color=as.character(max_category)), alpha=3/4) +
-  scale_color_manual(breaks = c("1", "2", "3", "4", "5"),values=c("yellow", "yellow", "yellow", "orange", "red")) + 
-  labs(size = "ACE Score", color = "Category" ) +
-  ggtitle("Named Storms and ACE score by Year") +
-  coord_equal() +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12, legend.position="bottom")
-
-ggplot(hurr_meta_major_wa, aes(year, ace)) +
-  geom_smooth(aes(x=year, y=ace, group = 1) , method = "lm",color="#008fd5",se=0) +
-  geom_point(aes(size=ace, color=as.character(max_category)), alpha=3/4) +
-  scale_color_manual(breaks = c("3", "4", "5"),values=c("yellow", "orange", "red")) +
-  labs(size = "ACE Score", color = "Category" ) +
-    ggtitle("Major Hurricanes and ACE score by Year") +
-  coord_equal() +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12, legend.position="bottom")
-
-
-ggplot(hurr_meta_intense_wa, aes(year, ace)) +
-  geom_smooth(aes(x=year, y=ace, group = 1) , method = "lm",color="#008fd5",se=0) +
-  geom_point(aes(size=ace, color=as.character(max_category)), alpha=3/4) +
-  scale_color_manual(breaks = c("4", "5"),values=c("orange","red")) +
-  labs(size = "ACE Score", color = "Category" ) +
-    ggtitle("Intense Hurricanes and ACE score by Year") +
-  coord_equal() +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12, legend.position="bottom")
-
-#grid.arrange(p1, p2, p3, ncol = 1, nrow = 3,  widths=1:1)
+year_ace_plot
 
 
 ```
 
-```{r, fig.cap=paste("figure 1. Total ACE score by year 1975-1980")}
+Figure 1 shows the sume of all the ACE scores for each year.  We are breaking the scores into each storm type and we see that all stroms show an upward trend in ACE. 
 
-   ggplot(year_ace_intense_wa, aes(year, ace)) +
-     geom_smooth(aes(x=year, y=ace, group = 1) , method = "lm",color="#008fd5",se=0) +
-     geom_point(aes(size=ace, color=as.character(max_category)), alpha=3/4) +
-    scale_color_manual(breaks = c("3", "4", "5"),values=c("yellow", "orange", "red")) +
-     ggtitle("Total ACE score by year") +
-     coord_equal() +
-     theme_bw() +
-     theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12)
+
+```{r, fig.cap=paste("Figure 2. Mean Max Wind Speed Meters Per Seconds 1980 - 2016")}
+
+year_mean_plot
 
 ```
+
+Figure 2 shows the mean maximun wind speed in meters per second for each year.  We can look at each storm type and see that intense, major, and all hurricanes there seems to be an upward trend in winds. For all named storms it seem flat and perhaps there is downward trend.
 
 ```{r}
 
@@ -148,14 +271,6 @@ The calculation LMI as max winds for meters per second. Is a lot simpler.  Hurda
 
 ```{r, fig.cap=paste("figure 2. Max Wind M/S by intense storms 1975-1980")}
 
- ggplot(hurr_meta_intense_wa, aes(year, log(max_wind_ms))) +
-    geom_smooth(aes(x=year, y=log(max_wind_ms), group = 1) , method = "lm",color="#008fd5",se=0) +
-    geom_point(aes(size=log(max_wind_ms), color=as.character(max_category)), alpha=3/4) +
-    scale_color_manual(breaks = c("4", "5"),values=c("orange", "red")) +
-    ggtitle("Intense Hurricanes by Max Wind in M/S") +
-    coord_equal() +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12, legend.position="none")
 
 
 
@@ -166,26 +281,10 @@ The calculation LMI as max winds for meters per second. Is a lot simpler.  Hurda
 
 ```{r}
 
-ggplot(year_ace_intense_wa, aes(year, log(max_wind_ms))) +
-     geom_smooth(aes(x=year, y=log(max_wind_ms), group = 1) , method = "lm",color="#008fd5",se=0) +
-     geom_point(aes(size=log(max_wind_ms), color=as.character(max_category)), alpha=3/4) +
-    scale_color_manual(breaks = c("3","4", "5"),values=c("yellow","orange","red")) +
-     ggtitle("Max wind as M/S by year") +
-     coord_equal() +
-     theme_bw() +
-     theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12, legend.position="bottom")
 ```
 
 ```{r, fig.cap=paste("figure 1. Total ACE score by year 1975-1980")}
 
-   ggplot(year_ace_major_wa, aes(year, log(max_wind_ms))) +
-     geom_smooth(aes(x=year, y=log(max_wind_ms), group = 1) , method = "lm",color="#008fd5",se=0) +
-     geom_point(aes(size=log(max_wind_ms), color=as.character(max_category)), alpha=3/4) +
-    scale_color_manual(breaks = c("3","4", "5"),values=c("yellow","orange","red")) +
-     ggtitle("Max wind as M/S by year") +
-     coord_equal() +
-     theme_bw() +
-     theme(axis.text.x = element_text(angle = 90, hjust = 1) , aspect.ratio=6/12)
 
 ```
 
@@ -197,32 +296,32 @@ ggplot(year_ace_intense_wa, aes(year, log(max_wind_ms))) +
 
 This provides easy ways to derive  LMI and ACE for each storm and then summarize the data by year.
 
-Show plots four columns nammed, hur, maj, int
 
-two rows 
-history
-1975+
-
-the preceding figures show the 
-
-we also want to see how the effects that max wind m/s and ace have in each indivual year.  we are expecting some very slight increases in intense hurricanes as we move foward in time.  then we take the  log on the max wind meters per second.  So we I will use linear regresion to asses wether this true.
+we also want to see how the effects that max wind m/s and ace have in each indivual year.  we are expecting some very slight increases in intense hurricanes as we move foward in time.  then we take the  log on the max wind meters per second. I will use linear regresion to asses wether this true.
 
 
 # Discussion 
 
 The preousi fuigures give us some insight into the possiblity that intense tropial systems are becoming more intense. This however does not provide us with any statistcal evidence of the increase.
 
-To look into the idea the max wind speeds are indeed increasing slightly we are using the max wind as m/s. m/s is used in numerouse studies (ref).  To see how this is chaning of the years I am converting the the years to a factor, in R then using the log of the maximum wind m/s of the storm.  Assuming the standard error fits the output we can chart the coef or slope to see how each year is  changing. Similar to what we did with >>>?
+To look into the idea the max wind speeds are indeed increasing slightly we are using the max wind as m/s. m/s is used in numerouse studies (ref).  To see how year is effecting the winds I am converting the the years to a factor, in R then using the log of the maximum wind m/s of the storm.  Assuming the standard error fits the output we can chart the coef or slope to see how each year is trending Similar to what we did with >>>?
 
-I wnat to look at the yearly totals and indivual stroms to see differences
+```{r include=FALSE}
 
-(add charts of scatter yearly and storm with r) (and for history and 1975+)
+hurr_meta_named_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hurr_meta$year >= 1980 & hurr_meta$named == 1)
+hurr_meta_hurricane_wa  <- subset(hurr_meta_wa, hurr_meta_wa$basin == "Western Atlantic"  & hurr_meta_wa$year >= 1980 & hurr_meta_wa$hurricane == 1)
+hurr_meta_major_wa <- subset(hurr_meta_wa, hurr_meta_wa$basin == "Western Atlantic"  & hurr_meta_wa$year >= 1980 & hurr_meta_wa$hurricane_major == 1 )
+hurr_meta_intense_wa <- subset(hurr_meta_wa, hurr_meta_wa$basin == "Western Atlantic"  & hurr_meta_wa$year >= 1980 & hurr_meta_wa$hurricane_intense == 1)
 
-there seems to be large step drop with coef around 1968, this is about the time of satelite obs started so I can only assume this is due to changes in data collection.  I have nto been able to find any research that mentions this. In fact many reasearch leaves out the years befor 1980,  which makes me wonder why? This would be a good topic for futuure resarch...  
 
-Looking at 1975 plus we say a definite uptick and clear patter upwards. This shows soem clear indications that indeed storms seem to gettting more intense even if it is small whhich is what we would expect.  each storm should be gettiting just a bit mroe intese. especuall intense storms.  this verifies what we observerd in the simple yearyly fgiures.  
+hurr_meta_intense_wa_all <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic" & hurr_meta$hurricane_intense == 1)
 
-With ace we should not have to do any log nor use the coeffiences.  ACE is and index that measures hte total intensity so it is arleady normailzied and ready for comapreis.  
+```
+
+
+Looking at 1980 plus we say a definite uptick and clear patter upwards. This shows soem clear indications that indeed troical cylcones in the north atlantics seem to be gettting more intense weh mesarued by the max wind. The increase is samll but this exactly  what we would expected.  each storm should be gettiting just a bit more intense. especially intense storms.  this verifies what we observerd in the simple yearyly fgiures.  
+
+With ace we should not have to do any log nor use the coeffiences.  ACE is and index that measures hte total intensity for the life time of the storm so it is arleady normailzied and ready for comapreis.  
 
 (add charts of scatter for yearly and strom with r)
 

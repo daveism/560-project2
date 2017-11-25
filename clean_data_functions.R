@@ -360,10 +360,18 @@ create_ace_data <-  function(hurr_meta){
   year_max_category$max_category <- as.numeric(year_max_category$max_category)
   year_max_ace$max_ace <- as.numeric(year_max_ace$max_ace)
 
-  #NAMED stomr count used by ACE TS, Hurricanes, and Subtropical.  Winds > 39 mph
+  #NAMED storm count used by ACE TS, Hurricanes, and Subtropical.  Winds > 39 mph
   cnt_named_temp <- subset(hurr_meta, hurr_meta$max_wind_mph > 39 & hurr_meta$named )
   year_named_cnt <- aggregate(x=cnt_named_temp$storm_id, by=list(cnt_named_temp$year, cnt_named_temp$basin),FUN=length)
   year_named_cnt <- dplyr::rename(year_named_cnt, year = Group.1, basin = Group.2, named_count = x)
+
+  #named avg wind in mpg
+  year_named_mph_avg <- aggregate(x=cnt_named_temp$max_wind_mph, by=list(cnt_named_temp$year, cnt_named_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
+  year_named_mph_avg <- dplyr::rename(year_named_mph_avg, year = Group.1, basin = Group.2, named_avg_max_mph = x)
+
+  #named avg wind in meters per second
+  year_named_ms_avg <- aggregate(x=cnt_named_temp$max_wind_ms, by=list(cnt_named_temp$year, cnt_named_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
+  year_named_ms_avg <- dplyr::rename(year_named_ms_avg, year = Group.1, basin = Group.2, named_avg_max_ms = x)
 
   #count if hurricanes
   cnt_hur_temp <- subset(hurr_meta, hurr_meta$max_category >= 1)
@@ -417,12 +425,15 @@ create_ace_data <-  function(hurr_meta){
 
 
   #merge yearly avg speed into yearly data frame
+  year_ace <- merge(x = year_ace, y=year_named_mph_avg, by=c("year", "basin") , all.x = TRUE)
+  year_ace <- merge(x = year_ace, y=year_named_ms_avg, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_hur_mph_avg, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_hur_ms_avg, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_major_mph_avg, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_major_ms_avg, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_intense_mph_avg, by=c("year", "basin") , all.x = TRUE)
   year_ace <- merge(x = year_ace, y=year_intense_ms_avg, by=c("year", "basin") , all.x = TRUE)
+
 
   #merge max min statisitics for year
   year_ace <- merge(x = year_ace, y=year_max_wind_mph, by=c("year", "basin") , all.x = TRUE)

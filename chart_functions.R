@@ -2,18 +2,38 @@
 #graphing functions
 #############################
 
-ggScatterAuto <-  function(data, xField, yField, method, title,
+ggScatterAutoNum <-  function(data, xField, yField, method, title,
                        xLabel, yLabel, source){
 
 
+  minid_year <- aggregate(x=as.numeric(data$year), by=list(data$num_id),FUN=min)
+
+  b_1980 <- subset(minid_year, minid_year$x == 1980)
+  b_1990 <- subset(minid_year, minid_year$x == 1990)
+  b_2000 <- subset(minid_year, minid_year$x == 2000)
+  b_2010 <- subset(minid_year, minid_year$x == 2010)
+
+  b_1980 <- as.numeric(b_1980[1,1])
+  b_1990 <- as.numeric(b_1990[1,1])
+  b_2000 <- as.numeric(b_2000[1,1])
+  b_2010 <- as.numeric(b_2010[1,1])
+
+  b_breaks = c( b_1980, b_1990, b_2000, b_2010 )
+  b_labels = c("1980", "1990", "2000", "2010")
+
   m <- lm(yField ~ xField, data);
   r2 <- format(summary(m)$r.squared, digits = 3)
-  pearsons <- format(cor(xField, yField, use = "complete.obs"), digits = 3)
+  # pearsons <- format(cor(xField, yField, use = "complete.obs"), digits = 3)
 
-  ggplot(data, aes(x = xField, y = yField)) +
-  geom_smooth(method = method,color="#008fd5",se=0) +
+  ggplot(data, aes(x = as.factor(xField), y = yField, group = 1)) +
+  geom_smooth(method = method,color="#008fd5",se=FALSE) +
   geom_point(color="#b2ddf2", alpha=.7, size=3) +
   geom_point(shape = 1, colour="#008fd5", alpha=.5, size=3) +
+
+  scale_x_discrete(
+                  breaks = b_breaks,
+                  labels = b_labels) +
+
   theme_minimal(base_size=theme_base_size) +
   labs(title= paste(title),
     subtitle=paste("R-squared = ",r2),
@@ -21,7 +41,52 @@ ggScatterAuto <-  function(data, xField, yField, method, title,
      y=yLabel,
      caption=paste("Source:",source)) +
      theme(plot.subtitle = element_text(color="#666666"),
-          plot.caption = element_text(color="#AAAAAA", size=6))
+          plot.caption = element_text(color="#AAAAAA", size=6),
+          axis.text.x = element_text(angle = 90, hjust = 1))
+
+}
+
+
+ggScatterAuto <-  function(data, xField, yField, method, title,
+                       xLabel, yLabel, source){
+
+
+  m <- lm(yField ~ xField, data);
+  r2 <- format(summary(m)$r.squared, digits = 3)
+
+  ggplot(data, aes(x = as.factor(xField), y = yField, group = 1)) +
+  geom_smooth(method = method,color="#008fd5",se=FALSE) +
+  geom_point(color="#b2ddf2", alpha=.7, size=3) +
+  geom_point(shape = 1, colour="#008fd5", alpha=.5, size=3) +
+
+  theme_minimal(base_size=theme_base_size) +
+  labs(title= paste(title),
+    subtitle=paste("R-squared = ",r2),
+     x=xLabel,
+     y=yLabel,
+     caption=paste("Source:",source)) +
+     theme(plot.subtitle = element_text(color="#666666"),
+          plot.caption = element_text(color="#AAAAAA", size=6),
+          axis.text.x = element_text(angle = 90, hjust = 1))
+
+}
+
+
+ggScatterAutoCoef <-  function(data, xField, yField, method, title,
+                       xLabel, yLabel, source){
+
+  ggplot(data, aes(x = xField, y = yField, group=1)) +
+  geom_smooth(method = method,color="#008fd5",se=0) +
+  geom_point(color="#b2ddf2", alpha=.7, size=3) +
+  geom_point(shape = 1, colour="#008fd5", alpha=.5, size=3) +
+  theme_minimal(base_size=theme_base_size) +
+  labs(title= paste(title),
+     x=xLabel,
+     y=yLabel,
+     caption=paste("Source:",source)) +
+     theme(plot.subtitle = element_text(color="#666666"),
+          plot.caption = element_text(color="#AAAAAA", size=6),
+          axis.text.x = element_text(angle = 90, hjust = 1))
 }
 
 ggScatterAutoNoR <-  function(data, xField, yField, method, title,
@@ -36,7 +101,7 @@ ggScatterAutoNoR <-  function(data, xField, yField, method, title,
   geom_point(shape = 1, colour="#008fd5", alpha=.5, size=3) +
   theme_minimal(base_size=theme_base_size) +
   labs(title= paste(title),
-     subtitle=paste("R-squared = ",r2),
+     #subtitle=paste("R-squared = ",r2),
      x=xLabel,
      y=yLabel,
      caption=paste("Source:",source)) +
