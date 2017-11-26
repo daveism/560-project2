@@ -13,8 +13,8 @@ singlecols <- c("All Storms" = "darkorange2")
 #ACE for all all stroms all years
 ggplot() +
    geom_line(data=year_ace_wa, aes(x=year, y=ace, group = 1, colour="All Storms")) +
-   geom_point(data=year_ace_wa, aes(x=year, y=ace, group = 1, size=ace), color="darkorange2", alpha=3/4) +
-    labs(size = "ACE", color = "Storms" ) +
+   geom_point(data=year_ace_wa, aes(x=year, y=ace, group = 1), color="darkorange2", alpha=3/4) +
+    labs( color = "Storms" ) +
 
    geom_smooth(data=year_ace_wa, aes(x=year, y=ace, group = 1), method = "lm",color="darkorange3",se=0) +
     scale_colour_manual( values = singlecols) +
@@ -52,11 +52,11 @@ ggplot() +
     scale_colour_manual( values = cols2) +
 
    #points
-   geom_point(data=year_ace_named_wa, aes(x=as.factor(year), y=ace, group = 1, size=ace), color="gray") +
-   geom_point(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurr_ace, group = 2, size=ace), color="yellow") +
-   geom_point(data=year_ace_major_wa, aes(x=as.factor(year), y=major_ace, group = 3, size=ace), color="darkorange2") +
-   geom_point(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_ace, group = 4, size=ace), color="firebrick1") +
-    labs(size = "ACE", color = "Storm" ) +
+   geom_point(data=year_ace_named_wa, aes(x=as.factor(year), y=ace, group = 1), color="gray") +
+   geom_point(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurr_ace, group = 2), color="yellow") +
+   geom_point(data=year_ace_major_wa, aes(x=as.factor(year), y=major_ace, group = 3), color="darkorange2") +
+   geom_point(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_ace, group = 4), color="firebrick1") +
+    labs( color = "Storm" ) +
     scale_x_discrete(breaks = b_breaks,labels = b_labels) +
 
    #Smoothed Lines
@@ -99,11 +99,11 @@ ggplot() +
      guides(fill=guide_legend(ncol=2)) +
 
     #points
-    geom_point(data=year_ace_named_wa, aes(x=as.factor(year), y=named_avg_max_ms, group = 1, size=named_avg_max_ms), color="gray") +
-    geom_point(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurricane_avg_max_ms, group = 2, size=hurricane_avg_max_ms), color="yellow") +
-    geom_point(data=year_ace_major_wa, aes(x=as.factor(year), y=major_avg_max_ms, group = 3, size=major_avg_max_ms), color="darkorange2") +
-    geom_point(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_avg_max_ms, group = 4, size=intense_avg_max_ms), color="firebrick1") +
-     labs(size = "M/S", color = "Storm" ) +
+    geom_point(data=year_ace_named_wa, aes(x=as.factor(year), y=named_avg_max_ms, group = 1), color="gray") +
+    geom_point(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurricane_avg_max_ms, group = 2), color="yellow") +
+    geom_point(data=year_ace_major_wa, aes(x=as.factor(year), y=major_avg_max_ms, group = 3), color="darkorange2") +
+    geom_point(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_avg_max_ms, group = 4), color="firebrick1") +
+     labs(color = "Storm" ) +
      scale_x_discrete(breaks = b_breaks,labels = b_labels) +
 
     #Smoothed Lines
@@ -155,9 +155,9 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
   log_max_wind_fit_intense$year,
   log_max_wind_fit_intense$coefficient,
   "lm",
-  "ALL Intense Storms and Max Wind M/S",
+  "Intense and Coefficients of Max Wind M/S",
   "Year",
-  "Coefficient ",
+  "Coefficients",
   "NOAA - Hurrdat2 data"
 )
 
@@ -173,15 +173,31 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
       "Max Wind M/S",
       "NOAA - Hurrdat2 data"
     )
+
+    #LM fit for max wind and year
     scatter_intense_wind_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.numeric(hurr_meta_hurricane_wa$year))
 
+    #Yearly mean wind M/S Intense
+    scatter_yearly_intense_wind <- ggScatterAuto(
+             year_ace_intense_wa,
+             as.numeric(year_ace_intense_wa$year),
+             log(year_ace_intense_wa$intense_avg_max_ms),
+             "lm",
+             "Intense Yearly Mean Max Wind M/S",
+             "Storm",
+             "Mean Max Wind M/S",
+             "NOAA - Hurrdat2 data"
+           )
+
+    #LM fit for MEAN max wind and year
+    scatter_yearly_intense_wind_fit <-lm( log(year_ace_intense_wa$intense_avg_max_ms) ~ as.numeric(year_ace_intense_wa$year))
 
     log_max_wind_fit_intense <- lm( hurr_meta_intense_wa$max_wind_ms ~ as.factor(hurr_meta_intense_wa$year))
 
     #remove overall coefficent we only want the individual years
     log_max_wind_fit_intense <- log_max_wind_fit_intense$coefficients[2:length(log_max_wind_fit_intense$coefficients)]
-    write.csv(log_max_wind_fit_intense, file.path(data_dir,"coef.csv"))
-    log_max_wind_fit_intense <- read.csv(file.path(data_dir,"coef.csv"))
+    write.csv(log_max_wind_fit_intense, file.path(data_dir,"intense_coef.csv"))
+    log_max_wind_fit_intense <- read.csv(file.path(data_dir,"intense_coef.csv"))
     log_max_wind_fit_intense$X <- str_sub(log_max_wind_fit_intense$X , -4,-1)
     log_max_wind_fit_intense <- dplyr::rename(log_max_wind_fit_intense, year = X, coefficient = x)
 
@@ -191,11 +207,26 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
       log_max_wind_fit_intense$year,
       log_max_wind_fit_intense$coefficient,
       "lm",
-      "Intense Hurricanes and Max Wind M/S",
+      "Intense Coefficients and of Max Wind M/S",
       "Year",
       "Coefficients",
       "NOAA - Hurrdat2 data"
     )
+
+    #Yearly mean ace Intense
+    scatter_yearly_intense_ace <- ggScatterAuto(
+             year_ace_intense_wa,
+             as.numeric(year_ace_intense_wa$year),
+             year_ace_intense_wa$intense_ace,
+             "lm",
+             "Intense and ACE Score (Year)",
+             "Storm",
+             "ACE",
+             "NOAA - Hurrdat2 data"
+           )
+
+    #LM fit for ace and year
+    scatter_yearly_intense_ace_fit <-lm( year_ace_intense_wa$intense_ace ~ as.numeric(year_ace_intense_wa$year))
 
     scatter_intense_ace <- ggScatterAuto(
       hurr_meta_intense_wa,
@@ -207,6 +238,11 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
       "ACE",
       "NOAA - Hurrdat2 data"
     )
+
+    #LM fit for MEAN max wind and year
+    scatter_intense_ace_fit <-lm( hurr_meta_intense_wa$ace ~ as.numeric(hurr_meta_intense_wa$year))
+
+
 
 
     #### major
@@ -224,12 +260,27 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
 
     scatter_major_wind_fit <- lm( log(hurr_meta_major_wa$max_wind_ms) ~ as.numeric(hurr_meta_major_wa$year))
 
+    #Yearly mean wind M/S major
+    scatter_yearly_major_wind <- ggScatterAuto(
+             year_ace_major_wa,
+             as.numeric(year_ace_major_wa$year),
+             log(year_ace_major_wa$major_avg_max_ms),
+             "lm",
+             "Major Yearly Mean Max Wind M/S",
+             "Storm",
+             "Mean Max Wind M/S",
+             "NOAA - Hurrdat2 data"
+           )
+
+    #LM fit for MEAN max wind and year
+    scatter_yearly_major_wind_fit <-lm( log(year_ace_major_wa$major_avg_max_ms) ~ as.numeric(year_ace_major_wa$year))
+
     log_max_wind_fit_major <- lm( hurr_meta_major_wa$max_wind_ms ~ as.factor(hurr_meta_major_wa$year))
 
     #remove overall coefficent we only want the individual years
     log_max_wind_fit_major <- log_max_wind_fit_major$coefficients[2:length(log_max_wind_fit_major$coefficients)]
-    write.csv(log_max_wind_fit_major, file.path(data_dir,"coef.csv"))
-    log_max_wind_fit_major <- read.csv(file.path(data_dir,"coef.csv"))
+    write.csv(log_max_wind_fit_major, file.path(data_dir,"major_coef.csv"))
+    log_max_wind_fit_major <- read.csv(file.path(data_dir,"major_coef.csv"))
     log_max_wind_fit_major$X <- str_sub(log_max_wind_fit_major$X , -4,-1)
     log_max_wind_fit_major <- dplyr::rename(log_max_wind_fit_major, year = X, coefficient = x)
 
@@ -239,22 +290,38 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
       log_max_wind_fit_major$year,
       log_max_wind_fit_major$coefficient,
       "lm",
-      "Major Hurricanes and Max Wind M/S",
+      "Major and Coefficients of Max Wind M/S",
       "Year",
-      "Coefficient ",
+      "Coefficients",
       "NOAA - Hurrdat2 data"
     )
 
-    scatter_major_ace_y <- ggScatterAuto(
-      hurr_meta_major_wa,
-      as.numeric(hurr_meta_major_wa$num_id),
-      hurr_meta_major_wa$ace,
-      "lm",
-      "Major Hurricanes and ACE Score",
-      "Storm",
-      "ACE",
-      "NOAA - Hurrdat2 data"
-    )
+    # scatter_major_ace_y <- ggScatterAuto(
+    #   hurr_meta_major_wa,
+    #   as.numeric(hurr_meta_major_wa$num_id),
+    #   hurr_meta_major_wa$ace,
+    #   "lm",
+    #   "Major Hurricanes and ACE Score",
+    #   "Storm",
+    #   "ACE",
+    #   "NOAA - Hurrdat2 data"
+    # )
+
+    #Yearly ACE major
+    scatter_yearly_major_ace <- ggScatterAuto(
+             year_ace_intense_wa,
+             as.numeric(year_ace_major_wa$year),
+             year_ace_major_wa$ace,
+             "lm",
+             "Major and ACE Score (Year)",
+             "Storm",
+             "ACE",
+             "NOAA - Hurrdat2 data"
+           )
+
+    #LM fit for MEAN max wind and year
+    scatter_yearly_major_ace_fit <-lm( year_ace_major_wa$ace ~ as.numeric(year_ace_major_wa$year))
+
 
     scatter_major_ace <- ggScatterAutoNum(
       hurr_meta_major_wa,
@@ -266,6 +333,11 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
       "ACE",
       "NOAA - Hurrdat2 data"
     )
+
+    #LM fit for MEAN max wind and year
+    scatter_major_ace_fit <-lm( hurr_meta_major_wa$ace ~ as.numeric(hurr_meta_major_wa$year))
+
+
 
 
     #### hurricane
@@ -283,12 +355,27 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
 
     scatter_hurricane_wind_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.numeric(hurr_meta_hurricane_wa$year))
 
+    #Yearly mean wind M/S major
+    scatter_yearly_hurricane_wind <- ggScatterAuto(
+             year_ace_hurr_wa,
+             as.numeric(year_ace_hurr_wa$year),
+             log(year_ace_hurr_wa$hurricane_avg_max_ms),
+             "lm",
+             "Hurricane Yearly Mean Max Wind M/S",
+             "Storm",
+             "Mean Max Wind M/S",
+             "NOAA - Hurrdat2 data"
+           )
+
+    #LM fit for MEAN max wind and year
+    scatter_yearly_hurricane_wind_fit <-lm( log(year_ace_hurr_wa$hurricane_avg_max_ms) ~ as.numeric(year_ace_hurr_wa$year))
+
     log_max_wind_fit_hurricane <- lm( hurr_meta_hurricane_wa$max_wind_ms ~ as.factor(hurr_meta_hurricane_wa$year))
 
     #remove overall coefficent we only want the individual years
     log_max_wind_fit_hurricane <- log_max_wind_fit_hurricane$coefficients[2:length(log_max_wind_fit_hurricane$coefficients)]
-    write.csv(log_max_wind_fit_hurricane, file.path(data_dir,"coef.csv"))
-    log_max_wind_fit_hurricane <- read.csv(file.path(data_dir,"coef.csv"))
+    write.csv(log_max_wind_fit_hurricane, file.path(data_dir,"hurricanes_coef.csv"))
+    log_max_wind_fit_hurricane <- read.csv(file.path(data_dir,"hurricanes_coef.csv"))
     log_max_wind_fit_hurricane$X <- str_sub(log_max_wind_fit_hurricane$X , -4,-1)
     log_max_wind_fit_hurricane <- dplyr::rename(log_max_wind_fit_hurricane, year = X, coefficient = x)
 
@@ -298,11 +385,26 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
       log_max_wind_fit_hurricane$year,
       log_max_wind_fit_hurricane$coefficient,
       "lm",
-      "Hurricanes and Max Wind M/S",
+      "Hurricanes and Coefficients of Max Wind M/S",
       "Year",
       "Coefficient ",
       "NOAA - Hurrdat2 data"
     )
+
+    #Yearly ace hurricane
+    scatter_yearly_hurricane_ace <- ggScatterAuto(
+             year_ace_hurr_wa,
+             as.numeric(year_ace_hurr_wa$year),
+             year_ace_hurr_wa$ace,
+             "lm",
+             "Hurricanes and ACE Score (Year)",
+             "Storm",
+             "ACE",
+             "NOAA - Hurrdat2 data"
+           )
+
+    #LM fit for MEAN max wind and year
+    scatter_yearly_hurricane_ace_fit <-lm( year_ace_hurr_wa$ace ~ as.numeric(year_ace_hurr_wa$year))
 
     scatter_hurricane_ace <- ggScatterAuto(
       hurr_meta_hurricane_wa,
@@ -314,6 +416,9 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
       "ACE",
       "NOAA - Hurrdat2 data"
     )
+
+    #LM fit for MEAN max wind and year
+    scatter_hurricane_ace_fit <-lm( hurr_meta_hurricane_wa$ace ~ as.numeric(hurr_meta_hurricane_wa$year))
 
 
       #### named
@@ -331,12 +436,27 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
 
       scatter_named_wind_fit <- lm( log(hurr_meta_named_wa$max_wind_ms) ~ as.numeric(hurr_meta_named_wa$year))
 
+      #Yearly mean wind M/S major
+      scatter_yearly_named_wind <- ggScatterAuto(
+               year_ace_named_wa,
+               as.numeric(year_ace_named_wa$year),
+               log(year_ace_named_wa$named_avg_max_ms),
+               "lm",
+               "Named Yearly Mean Max Wind M/S",
+               "Storm",
+               "Mean Max Wind M/S",
+               "NOAA - Hurrdat2 data"
+             )
+
+      #LM fit for MEAN max wind and year
+      scatter_yearly_named_hurricane_wind_fit <-lm( log(year_ace_named_wa$named_avg_max_ms) ~ as.numeric(year_ace_named_wa$year))
+
       log_max_wind_fit_named <- lm( hurr_meta_named_wa$max_wind_ms ~ as.factor(hurr_meta_named_wa$year))
 
       #remove overall coefficent we only want the individual years
       log_max_wind_fit_named <- log_max_wind_fit_named$coefficients[2:length(log_max_wind_fit_named$coefficients)]
-      write.csv(log_max_wind_fit_named, file.path(data_dir,"coef.csv"))
-      log_max_wind_fit_named <- read.csv(file.path(data_dir,"coef.csv"))
+      write.csv(log_max_wind_fit_named, file.path(data_dir,"nammed_coef.csv"))
+      log_max_wind_fit_named <- read.csv(file.path(data_dir,"nammed_coef.csv"))
       log_max_wind_fit_named$X <- str_sub(log_max_wind_fit_named$X , -4,-1)
       log_max_wind_fit_named <- dplyr::rename(log_max_wind_fit_named, year = X, coefficient = x)
 
@@ -346,11 +466,27 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
         log_max_wind_fit_named$year,
         log_max_wind_fit_named$coefficient,
         "lm",
-        "Nammed Storms and Max Wind M/S",
+        "Named and Coefficients of Max Wind M/S",
         "Year",
-        "Coefficient ",
+        "Coefficient",
         "NOAA - Hurrdat2 data"
       )
+
+      #Yearly ace named
+      scatter_yearly_named_ace <- ggScatterAuto(
+               year_ace_named_wa,
+               as.numeric(year_ace_named_wa$year),
+               year_ace_named_wa$ace,
+               "lm",
+               "Named and ACE Score (Year)",
+               "Storm",
+               "ACE",
+               "NOAA - Hurrdat2 data"
+             )
+
+      #LM fit for aced and year
+      scatter_yearly_named_ace_fit <-lm( year_ace_named_wa$ace ~ as.numeric(year_ace_named_wa$year))
+
 
       scatter_named_ace <- ggScatterAutoCoef(
         hurr_meta_named_wa,
@@ -362,3 +498,6 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
         "ACE",
         "NOAA - Hurrdat2 data"
       )
+
+      #LM fit for MEAN max wind and year
+      scatter_named_ace_fit <-lm( hurr_meta_named_wa$ace ~ as.numeric(hurr_meta_named_wa$year))

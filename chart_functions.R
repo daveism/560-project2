@@ -99,6 +99,7 @@ ggScatterAuto <-  function(data, xField, yField, method, title,
      y=yLabel,
      caption=paste("Source:",source)) +
      theme(plot.subtitle = element_text(color="#666666"),
+          # aspect.ratio = 8/12,
           plot.caption = element_text(color="#AAAAAA", size=6),
           axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -108,16 +109,23 @@ ggScatterAuto <-  function(data, xField, yField, method, title,
 ggScatterAutoCoef <-  function(data, xField, yField, method, title,
                        xLabel, yLabel, source){
 
+ b_breaks = c("1980", "1985", "1990", "1995", "2000",  "2005", "2010", "2015" )
+ b_labels = c("1980", "1985", "1990", "1995", "2000",  "2005", "2010", "2015" )
+
+
   ggplot(data, aes(x = xField, y = yField, group=1)) +
   geom_smooth(method = method,color="#008fd5",se=0) +
   geom_point(color="#b2ddf2", alpha=.7, size=3) +
   geom_point(shape = 1, colour="#008fd5", alpha=.5, size=3) +
+    scale_x_discrete(breaks = b_breaks,labels = b_labels) +
+
   theme_minimal(base_size=theme_base_size) +
   labs(title= paste(title),
      x=xLabel,
      y=yLabel,
      caption=paste("Source:",source)) +
      theme(plot.subtitle = element_text(color="#666666"),
+          # aspect.ratio = 8/12,
           plot.caption = element_text(color="#AAAAAA", size=6),
           axis.text.x = element_text(angle = 90, hjust = 1))
 }
@@ -257,7 +265,35 @@ ggBarMaxAll<- function(data, title, xfield, yfield, xlabel, ylabel, source){
 
 }
 
-ggBarYear<- function(data, title, xfield, yfield, xlabel, ylabel, source){
+ggBarStormsYear <- function(data, title, xfield, yfield, xlabel, ylabel, source){
+
+  b_breaks = c( "1851", "1875", "1900", "1925", "1950", "1975", "2000", "2016" )
+  b_labels = c("1851", "1875", "1900", "1925", "1950", "1975", "2000", "2016")
+
+  ggplot(data,aes(as.factor(xfield),  yfield)) +
+  geom_bar(position = "dodge", stat = "summary", fun.y = "max",
+           fill="#b2ddf2", color="#b2ddf2", size = .5) +
+  scale_x_discrete(
+                  breaks = b_breaks,
+                  labels = b_labels) +
+  theme_minimal(base_size=theme_base_size) +
+   labs(title= paste(title),
+        subtitle="",
+        x=xlabel,
+        y=ylabel,
+        caption=paste("Source:",source)) +
+        theme(plot.subtitle = element_text(color="#666666"),
+              # aspect.ratio = 8/12,
+
+                 plot.caption = element_text(color="#AAAAAA", size=6),
+               panel.grid.minor = element_blank(),
+           panel.background = element_blank())
+
+}
+
+
+
+ggBarYear <- function(data, title, xfield, yfield, xlabel, ylabel, source){
 
   m <- lm(yfield ~ xfield, data);
   r2 <- format(summary(m)$r.squared, digits = 3)
