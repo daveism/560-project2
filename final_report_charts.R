@@ -134,9 +134,9 @@ ggplot() +
 
 #storm data
 hurr_meta_named_wa <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hurr_meta$year >= 1980 & hurr_meta$named == 1)
-hurr_meta_hurricane_wa  <- subset(hurr_meta_wa, hurr_meta_wa$basin == "Western Atlantic"  & hurr_meta_wa$year >= 1980 & hurr_meta_wa$hurricane == 1)
-hurr_meta_major_wa <- subset(hurr_meta_wa, hurr_meta_wa$basin == "Western Atlantic"  & hurr_meta_wa$year >= 1980 & hurr_meta_wa$hurricane_major == 1 )
-hurr_meta_intense_wa <- subset(hurr_meta_wa, hurr_meta_wa$basin == "Western Atlantic"  & hurr_meta_wa$year >= 1980 & hurr_meta_wa$hurricane_intense == 1)
+hurr_meta_hurricane_wa  <- subset(hurr_meta_named_wa, hurr_meta_named_wa$basin == "Western Atlantic"  & hurr_meta_named_wa$year >= 1980 & hurr_meta_named_wa$hurricane == 1)
+hurr_meta_major_wa <- subset(hurr_meta_named_wa, hurr_meta_named_wa$basin == "Western Atlantic"  & hurr_meta_named_wa$year >= 1980 & hurr_meta_named_wa$hurricane_major == 1 )
+hurr_meta_intense_wa <- subset(hurr_meta_named_wa, hurr_meta_named_wa$basin == "Western Atlantic"  & hurr_meta_named_wa$year >= 1980 & hurr_meta_named_wa$hurricane_intense == 1)
 
 
 hurr_meta_intense_wa_all <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic" & hurr_meta$hurricane_intense == 1)
@@ -173,6 +173,8 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
       "Max Wind M/S",
       "NOAA - Hurrdat2 data"
     )
+    scatter_intense_wind_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.numeric(hurr_meta_hurricane_wa$year))
+
 
     log_max_wind_fit_intense <- lm( hurr_meta_intense_wa$max_wind_ms ~ as.factor(hurr_meta_intense_wa$year))
 
@@ -191,7 +193,7 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
       "lm",
       "Intense Hurricanes and Max Wind M/S",
       "Year",
-      "Coefficient ",
+      "Coefficients",
       "NOAA - Hurrdat2 data"
     )
 
@@ -200,9 +202,9 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
       hurr_meta_intense_wa$year,
       hurr_meta_intense_wa$ace,
       "lm",
-      "Intense Hurricanes and Max Wind M/S",
+      "Intense Hurricanes and ACE",
       "Storm",
-      "Max Wind M/S",
+      "ACE",
       "NOAA - Hurrdat2 data"
     )
 
@@ -211,7 +213,7 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
     #major scatter
     scatter_major_wind <- ggScatterAuto(
       hurr_meta_major_wa,
-      hurr_meta_major_wa$year,
+      as.numeric(hurr_meta_major_wa$year),
       log(hurr_meta_major_wa$max_wind_ms),
       "lm",
       "Major Hurricanes and Max Wind M/S",
@@ -219,6 +221,8 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
       "Max Wind M/S",
       "NOAA - Hurrdat2 data"
     )
+
+    scatter_major_wind_fit <- lm( log(hurr_meta_major_wa$max_wind_ms) ~ as.numeric(hurr_meta_major_wa$year))
 
     log_max_wind_fit_major <- lm( hurr_meta_major_wa$max_wind_ms ~ as.factor(hurr_meta_major_wa$year))
 
@@ -243,7 +247,7 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
 
     scatter_major_ace_y <- ggScatterAuto(
       hurr_meta_major_wa,
-      hurr_meta_major_wa$year,
+      as.numeric(hurr_meta_major_wa$num_id),
       hurr_meta_major_wa$ace,
       "lm",
       "Major Hurricanes and ACE Score",
@@ -254,7 +258,7 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
 
     scatter_major_ace <- ggScatterAutoNum(
       hurr_meta_major_wa,
-      hurr_meta_major_wa$num_id,
+      as.numeric(hurr_meta_major_wa$year),
       hurr_meta_major_wa$ace,
       "lm",
       "Major Hurricanes and ACE Score",
@@ -268,7 +272,7 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
     #hurricane scatter
     scatter_hurricane_wind <- ggScatterAuto(
       hurr_meta_hurricane_wa,
-      hurr_meta_hurricane_wa$year,
+      as.numeric(hurr_meta_hurricane_wa$year),
       log(hurr_meta_hurricane_wa$max_wind_ms),
       "lm",
       "Hurricanes and Max Wind M/S",
@@ -276,6 +280,8 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
       "Max Wind M/S",
       "NOAA - Hurrdat2 data"
     )
+
+    scatter_hurricane_wind_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.numeric(hurr_meta_hurricane_wa$year))
 
     log_max_wind_fit_hurricane <- lm( hurr_meta_hurricane_wa$max_wind_ms ~ as.factor(hurr_meta_hurricane_wa$year))
 
@@ -300,7 +306,7 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
 
     scatter_hurricane_ace <- ggScatterAuto(
       hurr_meta_hurricane_wa,
-      hurr_meta_hurricane_wa$year,
+      as.numeric(hurr_meta_hurricane_wa$year),
       hurr_meta_hurricane_wa$ace,
       "lm",
       "Hurricanes and ACE Score",
@@ -322,6 +328,8 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
         "Max Wind M/S",
         "NOAA - Hurrdat2 data"
       )
+
+      scatter_named_wind_fit <- lm( log(hurr_meta_named_wa$max_wind_ms) ~ as.numeric(hurr_meta_named_wa$year))
 
       log_max_wind_fit_named <- lm( hurr_meta_named_wa$max_wind_ms ~ as.factor(hurr_meta_named_wa$year))
 
@@ -346,7 +354,7 @@ scatter_intense_wind_coefficients <- ggScatterAutoCoef(
 
       scatter_named_ace <- ggScatterAutoCoef(
         hurr_meta_named_wa,
-        hurr_meta_named_wa$year,
+        as.numeric(hurr_meta_named_wa$year),
         hurr_meta_named_wa$ace,
         "lm",
         "Nammed Storms and ACE Score",
