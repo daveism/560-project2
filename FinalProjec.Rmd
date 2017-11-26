@@ -141,8 +141,7 @@ b_labels = c("1980", "1985", "1990", "1995", "2000",  "2005", "2010", "2015" )
 cols2 <- c("Named" = "gray", "Hurricanes" = "yellow", "Major" = "darkorange2","Intense" = "firebrick1")
 
 #Yearly ACE
-year_ace_plot <- 
-ggplot() +
+year_ace_plot <- ggplot() +
    #lines
    geom_line(data=year_ace_named_wa, aes(x=as.factor(year), y=ace, group = 1, colour="Named")) +
    geom_line(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurr_ace, group = 2, colour="Hurricanes")) +
@@ -324,9 +323,6 @@ hurr_meta_major_wa <- subset(hurr_meta_named_wa, hurr_meta_named_wa$basin == "We
 
 hurr_meta_intense_wa <- subset(hurr_meta_named_wa, hurr_meta_named_wa$basin == "Western Atlantic"  & hurr_meta_named_wa$year >= 1980 & hurr_meta_named_wa$hurricane_intense == 1)
 
-
-
-
 hurr_meta_intense_wa_all <- subset(hurr_meta_named_wa, hurr_meta_named_wa$basin == "Western Atlantic" & hurr_meta$hurricane_intense == 1)
 
     #### INTENSE
@@ -375,7 +371,7 @@ hurr_meta_intense_wa_all <- subset(hurr_meta_named_wa, hurr_meta_named_wa$basin 
       log_max_wind_fit_intense$year,
       log_max_wind_fit_intense$coefficient,
       "lm",
-      "Intense Hurricanes and Max Wind M/S",
+      "Intense Coefficients and of Max Wind M/S",
       "Year",
       "Coefficients",
       "NOAA - Hurrdat2 data"
@@ -458,9 +454,9 @@ hurr_meta_intense_wa_all <- subset(hurr_meta_named_wa, hurr_meta_named_wa$basin 
       log_max_wind_fit_major$year,
       log_max_wind_fit_major$coefficient,
       "lm",
-      "Major Hurricanes and Max Wind M/S",
+      "Major and Coefficients of Max Wind M/S",
       "Year",
-      "Coefficient ",
+      "Coefficients",
       "NOAA - Hurrdat2 data"
     )
 
@@ -553,7 +549,7 @@ hurr_meta_intense_wa_all <- subset(hurr_meta_named_wa, hurr_meta_named_wa$basin 
       log_max_wind_fit_hurricane$year,
       log_max_wind_fit_hurricane$coefficient,
       "lm",
-      "Hurricanes and Max Wind M/S",
+      "Hurricanes and Coefficients of Max Wind M/S",
       "Year",
       "Coefficient ",
       "NOAA - Hurrdat2 data"
@@ -634,9 +630,9 @@ hurr_meta_intense_wa_all <- subset(hurr_meta_named_wa, hurr_meta_named_wa$basin 
         log_max_wind_fit_named$year,
         log_max_wind_fit_named$coefficient,
         "lm",
-        "Nammed Storms and Max Wind M/S",
+        "Named and Coefficients of Max Wind M/S",
         "Year",
-        "Coefficient ",
+        "Coefficient",
         "NOAA - Hurrdat2 data"
       )
 

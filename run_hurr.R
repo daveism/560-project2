@@ -35,9 +35,11 @@ source(paste(repo_loc,"make_storm_datasets.R", sep = "/"))
 source(paste(repo_loc,"write_csv.R", sep = "/"))
 
 #charts
-source(paste(repo_loc,"charts_all.R", sep = "/"))
-source(paste(repo_loc,"charts_basins_all.R", sep = "/"))
-source(paste(repo_loc,"charts_all_1950.R", sep = "/"))
-source(paste(repo_loc,"charts_basins_all_1950.R", sep = "/"))
-source(paste(repo_loc,"charts_intense_all.R", sep = "/"))
-source(paste(repo_loc,"charts_intense_all_basins.R", sep = "/"))
+source(paste(repo_loc,"final_report_charts.R", sep = "/"))
+
+# source(paste(repo_loc,"charts_all.R", sep = "/"))
+# source(paste(repo_loc,"charts_basins_all.R", sep = "/"))
+# source(paste(repo_loc,"charts_all_1950.R", sep = "/"))
+# source(paste(repo_loc,"charts_basins_all_1950.R", sep = "/"))
+# source(paste(repo_loc,"charts_intense_all.R", sep = "/"))
+# source(paste(repo_loc,"charts_intense_all_basins.R", sep = "/"))

@@ -283,7 +283,7 @@ ggBarStormsYear <- function(data, title, xfield, yfield, xlabel, ylabel, source)
         y=ylabel,
         caption=paste("Source:",source)) +
         theme(plot.subtitle = element_text(color="#666666"),
-              # aspect.ratio = 8/12,
+               aspect.ratio = 6/12,
 
                  plot.caption = element_text(color="#AAAAAA", size=6),
                panel.grid.minor = element_blank(),
