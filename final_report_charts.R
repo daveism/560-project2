@@ -37,7 +37,7 @@ all_ace <- ggplot() +
    coord_equal() +
    theme_minimal(base_size=theme_base_size) +
    labs(
-     title = "ACE Score's since 1850",
+     title = "ACE Index Since 1850",
         x = "Year",
         y = "ACE",
       caption=paste("Source:","NOAA - Hurrdat2 data")) +
@@ -89,7 +89,7 @@ year_ace_plot <- ggplot() +
    theme_minimal(base_size=theme_base_size) +
 
    labs(
-     title = "ACE Score's since 1980",
+     title = "ACE Index Since 1980",
         x = "Year",
         y = "ACE",
       caption=paste("Source:","NOAA - Hurrdat2 data")) +
@@ -172,19 +172,23 @@ hurr_meta_intense_wa <- subset(hurr_meta_named_wa, hurr_meta_named_wa$basin == "
 
 
 hurr_meta_intense_wa_all <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic" & hurr_meta$hurricane_intense == 1)
-log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor(hurr_meta_intense_wa_all$year))
+log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.factor(hurr_meta_intense_wa_all$year))
+
 
     #### INTENSE
+    scatter_intense_wind_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.factor(hurr_meta_hurricane_wa$year))
+
     #intense scatter
-    scatter_intense_wind <- ggScatterAuto(
+    scatter_intense_wind <- ggScatterAutoF(
       hurr_meta_intense_wa,
-      as.numeric(hurr_meta_intense_wa$year),
+      as.factor(hurr_meta_intense_wa$year),
       log(hurr_meta_intense_wa$max_wind_ms),
       "lm",
       "Intense and Max Wind M/S",
       "Storm",
       "Max Wind M/S",
-      "NOAA - Hurrdat2 data"
+      "NOAA - Hurrdat2 data",
+      scatter_intense_wind_fit
     )
 
     chart_image <- paste("scatter_intense_wind_1980", "png", sep=".")
@@ -195,10 +199,10 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
 
 
     #LM fit for max wind and year
-    scatter_intense_wind_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.numeric(hurr_meta_hurricane_wa$year))
+    scatter_intense_wind_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.factor(hurr_meta_hurricane_wa$year))
 
     #Yearly mean wind M/S Intense
-    scatter_yearly_intense_wind <- ggScatterAuto(
+    scatter_yearly_intense_wind <- ggScatterAutoYearly(
              year_ace_intense_wa,
              as.numeric(year_ace_intense_wa$year),
              log(year_ace_intense_wa$intense_avg_max_ms),
@@ -245,13 +249,15 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
     chart_image <- gsub(" ", "_", chart_image)
     ggsave(chart_image, scatter_intense_wind_coefficients, width=image_width, height=image_height)
 
+    log_max_wind_fit_intense <- lm( hurr_meta_intense_wa$max_wind_ms ~ as.factor(hurr_meta_intense_wa$year))
+
     #Yearly mean ace Intense
-    scatter_yearly_intense_ace <- ggScatterAuto(
+    scatter_yearly_intense_ace <- ggScatterAutoYearly(
              year_ace_intense_wa,
              as.numeric(year_ace_intense_wa$year),
              year_ace_intense_wa$intense_ace,
              "lm",
-             "Intense and ACE Score (Year)",
+             "Intense and ACE (Year)",
              "Storm",
              "ACE",
              "NOAA - Hurrdat2 data"
@@ -266,17 +272,19 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
     #LM fit for ace and year
     scatter_yearly_intense_ace_fit <-lm( year_ace_intense_wa$intense_ace ~ as.numeric(year_ace_intense_wa$year))
 
-    scatter_intense_ace <- ggScatterAuto(
+    scatter_intense_ace_fit <-lm( hurr_meta_intense_wa$ace ~ as.factor(hurr_meta_intense_wa$year))
+
+    scatter_intense_ace <- ggScatterAutoF(
       hurr_meta_intense_wa,
-      hurr_meta_intense_wa$year,
+      as.numeric(hurr_meta_intense_wa$year),
       hurr_meta_intense_wa$ace,
       "lm",
       "Intense and ACE",
       "Storm",
       "ACE",
-      "NOAA - Hurrdat2 data"
+      "NOAA - Hurrdat2 data",
+      scatter_intense_ace_fit
     )
-
 
    chart_image <- paste("scatter_intense_ace_1980", "png", sep=".")
    chart_image <- file.path(charts_dir, chart_image)
@@ -285,14 +293,17 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
    ggsave(chart_image, scatter_intense_ace, width=image_width, height=image_height)
 
     #LM fit for MEAN max wind and year
-    scatter_intense_ace_fit <-lm( hurr_meta_intense_wa$ace ~ as.numeric(hurr_meta_intense_wa$year))
+    scatter_intense_ace_fit <-lm( hurr_meta_intense_wa$ace ~ as.factor(hurr_meta_intense_wa$year))
 
 
 
 
     #### major
+
+    scatter_major_wind_fit <- lm( log(hurr_meta_major_wa$max_wind_ms) ~ as.factor(hurr_meta_major_wa$year))
+
     #major scatter
-    scatter_major_wind <- ggScatterAuto(
+    scatter_major_wind <- ggScatterAutoF(
       hurr_meta_major_wa,
       as.numeric(hurr_meta_major_wa$year),
       log(hurr_meta_major_wa$max_wind_ms),
@@ -300,7 +311,8 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
       "Major and Max Wind M/S",
       "Storm",
       "Max Wind M/S",
-      "NOAA - Hurrdat2 data"
+      "NOAA - Hurrdat2 data",
+      scatter_major_wind_fit
     )
 
 
@@ -311,10 +323,10 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
    ggsave(chart_image, scatter_major_wind, width=image_width, height=image_height)
 
 
-    scatter_major_wind_fit <- lm( log(hurr_meta_major_wa$max_wind_ms) ~ as.numeric(hurr_meta_major_wa$year))
+    scatter_major_wind_fit <- lm( log(hurr_meta_major_wa$max_wind_ms) ~ as.factor(hurr_meta_major_wa$year))
 
     #Yearly mean wind M/S major
-    scatter_yearly_major_wind <- ggScatterAuto(
+    scatter_yearly_major_wind <- ggScatterAutoYearly(
              year_ace_major_wa,
              as.numeric(year_ace_major_wa$year),
              log(year_ace_major_wa$major_avg_max_ms),
@@ -361,14 +373,15 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
     chart_image <- gsub(" ", "_", chart_image)
     ggsave(chart_image, scatter_major_wind_coefficients, width=image_width, height=image_height)
 
+    log_max_wind_fit_major <- lm( hurr_meta_major_wa$max_wind_ms ~ as.factor(hurr_meta_major_wa$year))
 
     #Yearly ACE major
-    scatter_yearly_major_ace <- ggScatterAuto(
+    scatter_yearly_major_ace <- ggScatterAutoYearly(
              year_ace_major_wa,
              as.numeric(year_ace_major_wa$year),
              year_ace_major_wa$major_ace,
              "lm",
-             "Major and ACE Score (Year)",
+             "Major and ACE (Year)",
              "Storm",
              "ACE",
              "NOAA - Hurrdat2 data"
@@ -384,15 +397,18 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
     #LM fit for MEAN max wind and year
     scatter_yearly_major_ace_fit <-lm( year_ace_major_wa$ace ~ as.numeric(year_ace_major_wa$year))
 
-    scatter_major_ace <- ggScatterAutoNum(
+    scatter_major_ace_fit <-lm( hurr_meta_major_wa$ace ~ as.factor(hurr_meta_major_wa$year))
+
+    scatter_major_ace <- ggScatterAutoF(
       hurr_meta_major_wa,
       as.numeric(hurr_meta_major_wa$year),
       hurr_meta_major_wa$ace,
       "lm",
-      "Major and ACE Score",
+      "Major and ACE",
       "Storm",
       "ACE",
-      "NOAA - Hurrdat2 data"
+      "NOAA - Hurrdat2 data",
+      scatter_major_ace_fit
     )
 
     chart_image <- paste("scatter_major_ace_1980", "png", sep=".")
@@ -403,14 +419,17 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
 
 
     #LM fit for MEAN max wind and year
-    scatter_major_ace_fit <-lm( hurr_meta_major_wa$ace ~ as.numeric(hurr_meta_major_wa$year))
+    scatter_major_ace_fit <-lm( hurr_meta_major_wa$ace ~ as.factor(hurr_meta_major_wa$year))
 
 
 
 
     #### hurricane
+
+    scatter_hurricane_wind_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.factor(hurr_meta_hurricane_wa$year))
+
     #hurricane scatter
-    scatter_hurricane_wind <- ggScatterAuto(
+    scatter_hurricane_wind <- ggScatterAutoF(
       hurr_meta_hurricane_wa,
       as.numeric(hurr_meta_hurricane_wa$year),
       log(hurr_meta_hurricane_wa$max_wind_ms),
@@ -418,7 +437,8 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
       "Hurricanes and Max Wind M/S",
       "Storm",
       "Max Wind M/S",
-      "NOAA - Hurrdat2 data"
+      "NOAA - Hurrdat2 data",
+      scatter_hurricane_wind_fit
     )
 
 
@@ -428,11 +448,10 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
     chart_image <- gsub(" ", "_", chart_image)
     ggsave(chart_image, scatter_hurricane_wind, width=image_width, height=image_height)
 
-
-    scatter_hurricane_wind_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.numeric(hurr_meta_hurricane_wa$year))
+    scatter_hurricane_wind_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.factor(hurr_meta_hurricane_wa$year))
 
     #Yearly mean wind M/S major
-    scatter_yearly_hurricane_wind <- ggScatterAuto(
+    scatter_yearly_hurricane_wind <- ggScatterAutoYearly(
              year_ace_hurr_wa,
              as.numeric(year_ace_hurr_wa$year),
              log(year_ace_hurr_wa$hurricane_avg_max_ms),
@@ -479,13 +498,15 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
     chart_image <- gsub(" ", "_", chart_image)
     ggsave(chart_image, scatter_hurricane_wind_coefficients, width=image_width, height=image_height)
 
+    log_max_wind_fit_hurricane <- lm( hurr_meta_hurricane_wa$max_wind_ms ~ as.factor(hurr_meta_hurricane_wa$year))
+
     #Yearly ace hurricane
-    scatter_yearly_hurricane_ace <- ggScatterAuto(
+    scatter_yearly_hurricane_ace <- ggScatterAutoYearly(
              year_ace_hurr_wa,
              as.numeric(year_ace_hurr_wa$year),
              year_ace_hurr_wa$hurr_ace,
              "lm",
-             "Hurricanes and ACE Score (Year)",
+             "Hurricanes and ACE (Year)",
              "Storm",
              "ACE",
              "NOAA - Hurrdat2 data"
@@ -500,15 +521,18 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
     #LM fit for MEAN max wind and year
     scatter_yearly_hurricane_ace_fit <-lm( year_ace_hurr_wa$ace ~ as.numeric(year_ace_hurr_wa$year))
 
-    scatter_hurricane_ace <- ggScatterAuto(
+    scatter_hurricane_ace_fit <-lm( hurr_meta_hurricane_wa$ace ~ as.factor(hurr_meta_hurricane_wa$year))
+
+    scatter_hurricane_ace <- ggScatterAutoF(
       hurr_meta_hurricane_wa,
       as.numeric(hurr_meta_hurricane_wa$year),
       hurr_meta_hurricane_wa$ace,
       "lm",
-      "Hurricanes and ACE Score",
+      "Hurricanes and ACE",
       "Storm",
       "ACE",
-      "NOAA - Hurrdat2 data"
+      "NOAA - Hurrdat2 data",
+      scatter_hurricane_ace_fit
     )
 
     chart_image <- paste("scatter_hurricane_ace_1980", "png", sep=".")
@@ -518,20 +542,23 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
     ggsave(chart_image, scatter_hurricane_ace, width=image_width, height=image_height)
 
     #LM fit for MEAN max wind and year
-    scatter_hurricane_ace_fit <-lm( hurr_meta_hurricane_wa$ace ~ as.numeric(hurr_meta_hurricane_wa$year))
+    scatter_hurricane_ace_fit <-lm( hurr_meta_hurricane_wa$ace ~ as.factor(hurr_meta_hurricane_wa$year))
 
 
       #### named
+      scatter_named_wind_fit <- lm( log(hurr_meta_named_wa$max_wind_ms) ~ as.factor(hurr_meta_named_wa$year))
+
       #named scatter
-      scatter_named_wind <- ggScatterAuto(
+      scatter_named_wind <- ggScatterAutoF(
         hurr_meta_named_wa,
         as.numeric(hurr_meta_named_wa$year),
         log(hurr_meta_named_wa$max_wind_ms),
         "lm",
-        "Nammed Storms and Max Wind M/S",
+        "Nammed and Max Wind M/S",
         "Storm",
         "Max Wind M/S",
-        "NOAA - Hurrdat2 data"
+        "NOAA - Hurrdat2 data",
+        scatter_named_wind_fit
       )
 
       chart_image <- paste("scatter_named_wind_1980", "png", sep=".")
@@ -540,10 +567,10 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
       chart_image <- gsub(" ", "_", chart_image)
       ggsave(chart_image, scatter_named_wind, width=image_width, height=image_height)
 
-      scatter_named_wind_fit <- lm( log(hurr_meta_named_wa$max_wind_ms) ~ as.numeric(hurr_meta_named_wa$year))
+      scatter_named_wind_fit <- lm( log(hurr_meta_named_wa$max_wind_ms) ~ as.factor(hurr_meta_named_wa$year))
 
       #Yearly mean wind M/S major
-      scatter_yearly_named_wind <- ggScatterAuto(
+      scatter_yearly_named_wind <- ggScatterAutoYearly(
                year_ace_named_wa,
                as.numeric(year_ace_named_wa$year),
                log(year_ace_named_wa$named_avg_max_ms),
@@ -590,13 +617,15 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
       chart_image <- gsub(" ", "_", chart_image)
       ggsave(chart_image, scatter_named_wind_coefficients, width=image_width, height=image_height)
 
+      log_max_wind_fit_named <- lm( hurr_meta_named_wa$max_wind_ms ~ as.factor(hurr_meta_named_wa$year))
+
       #Yearly ace named
-      scatter_yearly_named_ace <- ggScatterAuto(
+      scatter_yearly_named_ace <- ggScatterAutoYearly(
                year_ace_named_wa,
                as.numeric(year_ace_named_wa$year),
                year_ace_named_wa$ace,
                "lm",
-               "Named and ACE Score (Year)",
+               "Named and ACE (Year)",
                "Storm",
                "ACE",
                "NOAA - Hurrdat2 data"
@@ -611,16 +640,18 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
       #LM fit for aced and year
       scatter_yearly_named_ace_fit <-lm( year_ace_named_wa$ace ~ as.numeric(year_ace_named_wa$year))
 
+      scatter_named_ace_fit <-lm( hurr_meta_named_wa$ace ~ as.factor(hurr_meta_named_wa$year))
 
-      scatter_named_ace <- ggScatterAutoCoef(
+      scatter_named_ace <- ggScatterAutoF(
         hurr_meta_named_wa,
         as.numeric(hurr_meta_named_wa$year),
         hurr_meta_named_wa$ace,
         "lm",
-        "Nammed Storms and ACE Score",
+        "Nammed and ACE",
         "Storm",
         "ACE",
-        "NOAA - Hurrdat2 data"
+        "NOAA - Hurrdat2 data",
+        scatter_named_ace_fit
       )
 
       chart_image <- paste("scatter_named_ace_1980", "png", sep=".")
@@ -630,4 +661,4 @@ log_max_wind_fit_intense <- lm( hurr_meta_intense_wa_all$max_wind_ms ~ as.factor
       ggsave(chart_image, scatter_named_ace, width=image_width, height=image_height)
 
       #LM fit for MEAN max wind and year
-      scatter_named_ace_fit <-lm( hurr_meta_named_wa$ace ~ as.numeric(hurr_meta_named_wa$year))
+      scatter_named_ace_fit <-lm( hurr_meta_named_wa$ace ~ as.factor(hurr_meta_named_wa$year))
