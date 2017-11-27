@@ -51,8 +51,8 @@ ggScatterAutoNum <-  function(data, xField, yField, method, title,
 ggScatterAutoF <-  function(data, xField, yField, method, title,
                        xLabel, yLabel, source, lm){
 
-  b_breaks = c("1980", "1985", "1990", "1995", "2000",  "2005", "2010", "2015" )
-  b_labels = c("1980", "1985", "1990", "1995", "2000",  "2005", "2010", "2015" )
+  b_breaks = c(1980, 1985, 1990, 1995, 2000, 2005, 2010, 2015 )
+  b_labels = c("1980", "1985", "1990", "1995", "2000", "2005", "2010", "2015" )
 
   # m <- lm(yField ~ xField, data);
   r2 <- format(summary(lm)$r.squared, digits = 3)
@@ -61,7 +61,7 @@ ggScatterAutoF <-  function(data, xField, yField, method, title,
   geom_smooth(method = method,color="#008fd5",se=FALSE) +
   geom_point(color="#b2ddf2", alpha=.7, size=3) +
   geom_point(shape = 1, colour="#008fd5", alpha=.5, size=3) +
-    scale_x_discrete(breaks = b_breaks,labels = b_labels) +
+    # scale_x_discrete(breaks = b_breaks,labels = b_labels) +
 
   theme_minimal(base_size=theme_base_size) +
   labs(title= paste(title),
@@ -142,7 +142,7 @@ ggScatterAutoCoef <-  function(data, xField, yField, method, title,
 
 
   ggplot(data, aes(x = xField, y = yField, group=1)) +
-  geom_smooth(method = method,color="#008fd5",se=0) +
+  geom_smooth(method = method,color="#008fd5",se=TRUE) +
   geom_point(color="#b2ddf2", alpha=.7, size=3) +
   geom_point(shape = 1, colour="#008fd5", alpha=.5, size=3) +
     scale_x_discrete(breaks = b_breaks,labels = b_labels) +
