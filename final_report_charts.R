@@ -272,14 +272,34 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.f
     #LM fit for MEAN max wind and year
     scatter_yearly_intense_wind_fit <- lm( log(year_ace_intense_wa$intense_avg_max_ms) ~ as.numeric(year_ace_intense_wa$year))
 
-    log_max_wind_fit_intense <- lm( hurr_meta_intense_wa$max_wind_ms ~ as.factor(hurr_meta_intense_wa$year))
+    log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa$max_wind_ms) ~ as.factor(hurr_meta_intense_wa$year))
+    log_max_wind_fit_intense_stder <- lm( log(hurr_meta_intense_wa$max_wind_ms) ~ as.factor(hurr_meta_intense_wa$year))
 
     #remove overall coefficent we only want the individual years
     log_max_wind_fit_intense <- log_max_wind_fit_intense$coefficients[2:length(log_max_wind_fit_intense$coefficients)]
+    test_stder <- summary(log_max_wind_fit_intense_stder)$coef[,2]
+
     write.csv(log_max_wind_fit_intense, file.path(data_dir,"intense_coef.csv"))
+    write.csv(test_stder, file.path(data_dir,"intense_stder.csv"))
+
     log_max_wind_fit_intense <- read.csv(file.path(data_dir,"intense_coef.csv"))
+    log_max_wind_fit_intense_stder <- read.csv(file.path(data_dir,"intense_stder.csv"))
+
+    log_max_wind_fit_intense_stder = log_max_wind_fit_intense_stder[-1,]
+
     log_max_wind_fit_intense$X <- str_sub(log_max_wind_fit_intense$X , -4,-1)
+    log_max_wind_fit_intense_stder$X <- str_sub(log_max_wind_fit_intense_stder$X , -4,-1)
+
     log_max_wind_fit_intense <- dplyr::rename(log_max_wind_fit_intense, year = X, coefficient = x)
+    log_max_wind_fit_intense_stder <- dplyr::rename(log_max_wind_fit_intense_stder, year = X, stder = x)
+
+    log_max_wind_fit_major <- merge(x = log_max_wind_fit_intense, y=log_max_wind_fit_intense_stder, by=c("year") , all.x = TRUE)
+
+    write.csv(log_max_wind_fit_major, file.path(data_dir,"intense_coef.csv"))
+    write.csv(log_max_wind_fit_intense_stder, file.path(data_dir,"intense_stder.csv"))
+
+
+####
 
     #intense scatter coefficients
     scatter_intense_wind_coefficients <- ggScatterAutoCoef(
@@ -287,7 +307,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.f
       log_max_wind_fit_intense$year,
       log_max_wind_fit_intense$coefficient,
       "lm",
-      "Intense Coefficients and of Max Wind M/S",
+      "Intense Coefficients of Max Wind M/S",
       "Year",
       "Coefficients",
       "NOAA - Hurrdat2 data"
@@ -299,7 +319,34 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.f
     chart_image <- gsub(" ", "_", chart_image)
     ggsave(chart_image, scatter_intense_wind_coefficients, width=image_width, height=image_height)
 
-    log_max_wind_fit_intense <- lm( hurr_meta_intense_wa$max_wind_ms ~ as.factor(hurr_meta_intense_wa$year))
+    box_yearly_intense_wind  <- ggplot(hurr_meta_intense_wa ,aes(as.factor(hurr_meta_intense_wa$year),log(hurr_meta_intense_wa$max_wind_ms)) )  +
+      geom_boxplot() +
+      geom_smooth(method = "lm", se=FALSE, color="black", aes(group=1)) +
+
+     coord_equal() +
+     theme_minimal(base_size=theme_base_size) +
+
+     labs(
+       title = "Intense and Max Wind M/S",
+          x = "Year",
+          y = "Max Wind Speed M/S",
+        caption=paste("Source:","NOAA - Hurrdat2 data")) +
+
+     theme(axis.text.x = element_text(angle = 90, hjust = 1) ,
+           aspect.ratio = 6/18,
+           legend.position = "bottom",
+           plot.subtitle = element_text(color="#666666"),
+           plot.caption = element_text(color="#AAAAAA", size=6),
+         )
+
+     chart_image <- paste("box_wind_Intense_1980", "png", sep=".")
+     chart_image <- file.path(charts_dir, chart_image)
+     chart_image <- chart_image[1]
+     chart_image <- gsub(" ", "_", chart_image)
+     ggsave(chart_image, box_yearly_intense_wind, width=image_extra_width, height=image_extra_height)
+
+    log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa$max_wind_ms) ~ as.factor(hurr_meta_intense_wa$year))
+    log_max_wind_fit_intense_stder <- lm( log(hurr_meta_intense_wa$max_wind_ms) ~ as.factor(hurr_meta_intense_wa$year))
 
     #Yearly mean ace Intense
     scatter_yearly_intense_ace <- ggScatterAutoYearly(
@@ -396,14 +443,33 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.f
     #LM fit for MEAN max wind and year
     scatter_yearly_major_wind_fit <- lm( log(year_ace_major_wa$major_avg_max_ms) ~ as.numeric(year_ace_major_wa$year))
 
-    log_max_wind_fit_major <- lm( hurr_meta_major_wa$max_wind_ms ~ as.factor(hurr_meta_major_wa$year))
+    log_max_wind_fit_major <- lm( log(hurr_meta_major_wa$max_wind_ms) ~ as.factor(hurr_meta_major_wa$year))
+    log_max_wind_fit_major_stder <- lm( log(hurr_meta_major_wa$max_wind_ms) ~ as.factor(hurr_meta_major_wa$year))
 
     #remove overall coefficent we only want the individual years
     log_max_wind_fit_major <- log_max_wind_fit_major$coefficients[2:length(log_max_wind_fit_major$coefficients)]
+    test_stder <- summary(log_max_wind_fit_major_stder)$coef[,2]
+
     write.csv(log_max_wind_fit_major, file.path(data_dir,"major_coef.csv"))
+    write.csv(test_stder, file.path(data_dir,"major_stder.csv"))
+
     log_max_wind_fit_major <- read.csv(file.path(data_dir,"major_coef.csv"))
+    log_max_wind_fit_major_stder <- read.csv(file.path(data_dir,"major_stder.csv"))
+
+    log_max_wind_fit_major_stder = log_max_wind_fit_major_stder[-1,]
+
     log_max_wind_fit_major$X <- str_sub(log_max_wind_fit_major$X , -4,-1)
+    log_max_wind_fit_major_stder$X <- str_sub(log_max_wind_fit_major_stder$X , -4,-1)
+
     log_max_wind_fit_major <- dplyr::rename(log_max_wind_fit_major, year = X, coefficient = x)
+    log_max_wind_fit_major_stder <- dplyr::rename(log_max_wind_fit_major_stder, year = X, stder = x)
+
+    log_max_wind_fit_major <- merge(x = log_max_wind_fit_major, y=log_max_wind_fit_major_stder, by=c("year") , all.x = TRUE)
+
+    write.csv(log_max_wind_fit_major, file.path(data_dir,"major_coef.csv"))
+    write.csv(log_max_wind_fit_major_stder, file.path(data_dir,"major_stder.csv"))
+
+####
 
     #major scatter coefficients
     scatter_major_wind_coefficients <- ggScatterAutoCoef(
@@ -423,7 +489,34 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.f
     chart_image <- gsub(" ", "_", chart_image)
     ggsave(chart_image, scatter_major_wind_coefficients, width=image_width, height=image_height)
 
-    log_max_wind_fit_major <- lm( hurr_meta_major_wa$max_wind_ms ~ as.factor(hurr_meta_major_wa$year))
+    box_yearly_major_wind <- ggplot(hurr_meta_major_wa ,aes(as.factor(hurr_meta_major_wa$year),log(hurr_meta_major_wa$max_wind_ms)) )  +
+      geom_boxplot() +
+      geom_smooth(method = "lm", se=FALSE, color="black", aes(group=1)) +
+
+     coord_equal() +
+     theme_minimal(base_size=theme_base_size) +
+
+     labs(
+       title = "Major and Max Wind M/S",
+          x = "Year",
+          y = "Max Wind Speed M/S",
+        caption=paste("Source:","NOAA - Hurrdat2 data")) +
+
+     theme(axis.text.x = element_text(angle = 90, hjust = 1) ,
+           aspect.ratio = 6/18,
+           legend.position = "bottom",
+           plot.subtitle = element_text(color="#666666"),
+           plot.caption = element_text(color="#AAAAAA", size=6),
+         )
+
+     chart_image <- paste("box_wind_major_1980", "png", sep=".")
+     chart_image <- file.path(charts_dir, chart_image)
+     chart_image <- chart_image[1]
+     chart_image <- gsub(" ", "_", chart_image)
+     ggsave(chart_image, box_yearly_major_wind, width=image_extra_width, height=image_extra_height)
+
+    log_max_wind_fit_major <- lm( log(hurr_meta_major_wa$max_wind_ms) ~ as.factor(hurr_meta_major_wa$year))
+    log_max_wind_fit_major_stder <- lm( log(hurr_meta_major_wa$max_wind_ms) ~ as.factor(hurr_meta_major_wa$year))
 
     #Yearly ACE major
     scatter_yearly_major_ace <- ggScatterAutoYearly(
@@ -519,14 +612,31 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.f
     #LM fit for MEAN max wind and year
     scatter_yearly_hurricane_wind_fit <- lm( log(year_ace_hurr_wa$hurricane_avg_max_ms) ~ as.numeric(year_ace_hurr_wa$year))
 
-    log_max_wind_fit_hurricane <- lm( hurr_meta_hurricane_wa$max_wind_ms ~ as.factor(hurr_meta_hurricane_wa$year))
+    log_max_wind_fit_hurricane <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.factor(hurr_meta_hurricane_wa$year))
+    log_max_wind_fit_hurricane_stder <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.factor(hurr_meta_hurricane_wa$year))
 
     #remove overall coefficent we only want the individual years
     log_max_wind_fit_hurricane <- log_max_wind_fit_hurricane$coefficients[2:length(log_max_wind_fit_hurricane$coefficients)]
+    test_stder <- summary(log_max_wind_fit_hurricane_stder)$coef[,2]
+
     write.csv(log_max_wind_fit_hurricane, file.path(data_dir,"hurricanes_coef.csv"))
+    write.csv(test_stder, file.path(data_dir,"hurricanes_stder.csv"))
+
     log_max_wind_fit_hurricane <- read.csv(file.path(data_dir,"hurricanes_coef.csv"))
+    log_max_wind_fit_hurricane_stder <- read.csv(file.path(data_dir,"hurricanes_stder.csv"))
+
+    log_max_wind_fit_hurricane_stder = log_max_wind_fit_hurricane_stder[-1,]
+
     log_max_wind_fit_hurricane$X <- str_sub(log_max_wind_fit_hurricane$X , -4,-1)
+    log_max_wind_fit_hurricane_stder$X <- str_sub(log_max_wind_fit_hurricane_stder$X , -4,-1)
+
     log_max_wind_fit_hurricane <- dplyr::rename(log_max_wind_fit_hurricane, year = X, coefficient = x)
+    log_max_wind_fit_hurricane_stder <- dplyr::rename(log_max_wind_fit_hurricane_stder, year = X, stder = x)
+
+    log_max_wind_fit_hurricane <- merge(x = log_max_wind_fit_hurricane, y=log_max_wind_fit_hurricane_stder, by=c("year") , all.x = TRUE)
+
+    write.csv(log_max_wind_fit_hurricane, file.path(data_dir,"hurricanes_coef.csv"))
+    write.csv(log_max_wind_fit_hurricane_stder, file.path(data_dir,"hurricanes_stder.csv"))
 
     #hurricane scatter coefficients
     scatter_hurricane_wind_coefficients <- ggScatterAutoCoef(
@@ -546,7 +656,36 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.f
     chart_image <- gsub(" ", "_", chart_image)
     ggsave(chart_image, scatter_hurricane_wind_coefficients, width=image_width, height=image_height)
 
-    log_max_wind_fit_hurricane <- lm( hurr_meta_hurricane_wa$max_wind_ms ~ as.factor(hurr_meta_hurricane_wa$year))
+
+        box_yearly_hurricane_wind  <- ggplot(hurr_meta_hurricane_wa ,aes(as.factor(hurr_meta_hurricane_wa$year),log(hurr_meta_hurricane_wa$max_wind_ms)) )  +
+          geom_boxplot() +
+          geom_smooth(method = "lm", se=FALSE, color="black", aes(group=1)) +
+
+         coord_equal() +
+         theme_minimal(base_size=theme_base_size) +
+
+         labs(
+           title = "Hurricanes and Max Wind M/S",
+              x = "Year",
+              y = "Max Wind Speed M/S",
+            caption=paste("Source:","NOAA - Hurrdat2 data")) +
+
+         theme(axis.text.x = element_text(angle = 90, hjust = 1) ,
+               aspect.ratio = 6/18,
+               legend.position = "bottom",
+               plot.subtitle = element_text(color="#666666"),
+               plot.caption = element_text(color="#AAAAAA", size=6),
+             )
+
+         chart_image <- paste("box_wind_hurricanes_1980", "png", sep=".")
+         chart_image <- file.path(charts_dir, chart_image)
+         chart_image <- chart_image[1]
+         chart_image <- gsub(" ", "_", chart_image)
+         ggsave(chart_image, box_yearly_hurricane_wind, width=image_extra_width, height=image_extra_height)
+
+
+    log_max_wind_fit_hurricane <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.factor(hurr_meta_hurricane_wa$year))
+    log_max_wind_fit_hurricane_stder <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.factor(hurr_meta_hurricane_wa$year))
 
     #Yearly ace hurricane
     scatter_yearly_hurricane_ace <- ggScatterAutoYearly(
@@ -636,16 +775,33 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.f
        ggsave(chart_image, scatter_yearly_named_wind, width=image_width, height=image_height)
 
       #LM fit for MEAN max wind and year
-      scatter_yearly_named_hurricane_wind_fit <- lm( log(year_ace_named_wa$named_avg_max_ms) ~ as.numeric(year_ace_named_wa$year))
+      scatter_yearly_named_wind_fit <- lm( log(year_ace_named_wa$named_avg_max_ms) ~ as.numeric(year_ace_named_wa$year))
 
-      log_max_wind_fit_named <- lm( hurr_meta_named_wa$max_wind_ms ~ as.factor(hurr_meta_named_wa$year))
+      log_max_wind_fit_named <- lm( log(hurr_meta_named_wa$max_wind_ms) ~ as.factor(hurr_meta_named_wa$year))
+      log_max_wind_fit_named_stder <- lm( log(hurr_meta_named_wa$max_wind_ms) ~ as.factor(hurr_meta_named_wa$year))
 
       #remove overall coefficent we only want the individual years
       log_max_wind_fit_named <- log_max_wind_fit_named$coefficients[2:length(log_max_wind_fit_named$coefficients)]
+      test_stder <- summary(log_max_wind_fit_named_stder)$coef[,2]
+
       write.csv(log_max_wind_fit_named, file.path(data_dir,"nammed_coef.csv"))
+      write.csv(test_stder, file.path(data_dir,"nammed_stder.csv"))
+
       log_max_wind_fit_named <- read.csv(file.path(data_dir,"nammed_coef.csv"))
+      log_max_wind_fit_named_stder <- read.csv(file.path(data_dir,"nammed_stder.csv"))
+
+      log_max_wind_fit_named_stder = log_max_wind_fit_named_stder[-1,]
+
       log_max_wind_fit_named$X <- str_sub(log_max_wind_fit_named$X , -4,-1)
+      log_max_wind_fit_named_stder$X <- str_sub(log_max_wind_fit_named_stder$X , -4,-1)
+
       log_max_wind_fit_named <- dplyr::rename(log_max_wind_fit_named, year = X, coefficient = x)
+      log_max_wind_fit_named_stder <- dplyr::rename(log_max_wind_fit_named_stder, year = X, stder = x)
+
+      log_max_wind_fit_named <- merge(x = log_max_wind_fit_named, y=log_max_wind_fit_named_stder, by=c("year") , all.x = TRUE)
+
+      write.csv(log_max_wind_fit_named, file.path(data_dir,"nammed_coef.csv"))
+      write.csv(log_max_wind_fit_named_stder, file.path(data_dir,"nammed_stder.csv"))
 
       #hurricane scatter coefficients
       scatter_named_wind_coefficients <- ggScatterAutoCoef(
@@ -665,7 +821,36 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.f
       chart_image <- gsub(" ", "_", chart_image)
       ggsave(chart_image, scatter_named_wind_coefficients, width=image_width, height=image_height)
 
-      log_max_wind_fit_named <- lm( hurr_meta_named_wa$max_wind_ms ~ as.factor(hurr_meta_named_wa$year))
+      box_yearly_named_wind  <- ggplot(hurr_meta_named_wa ,aes(as.factor(hurr_meta_named_wa$year),log(hurr_meta_named_wa$max_wind_ms)) )  +
+        geom_boxplot() +
+        geom_smooth(method = "lm", se=FALSE, color="black", aes(group=1)) +
+
+       coord_equal() +
+       theme_minimal(base_size=theme_base_size) +
+
+       labs(
+         title = "Named and Max Wind M/S",
+            x = "Year",
+            y = "Max Wind Speed M/S",
+          caption=paste("Source:","NOAA - Hurrdat2 data")) +
+
+       theme(axis.text.x = element_text(angle = 90, hjust = 1) ,
+             aspect.ratio = 6/18,
+             legend.position = "bottom",
+             plot.subtitle = element_text(color="#666666"),
+             plot.caption = element_text(color="#AAAAAA", size=6),
+           )
+
+       chart_image <- paste("box_wind_named_1980", "png", sep=".")
+       chart_image <- file.path(charts_dir, chart_image)
+       chart_image <- chart_image[1]
+       chart_image <- gsub(" ", "_", chart_image)
+       ggsave(chart_image, box_yearly_named_wind, width=image_extra_width, height=image_extra_height)
+
+
+
+      log_max_wind_fit_named <- lm( log(hurr_meta_named_wa$max_wind_ms) ~ as.factor(hurr_meta_named_wa$year))
+      log_max_wind_fit_named_stder <- lm( log(hurr_meta_named_wa$max_wind_ms) ~ as.factor(hurr_meta_named_wa$year))
 
       #Yearly ace named
       scatter_yearly_named_ace <- ggScatterAutoYearly(
