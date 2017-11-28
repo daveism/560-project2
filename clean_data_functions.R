@@ -249,19 +249,21 @@ append_meta_data <- function(hurr_obs, hurr_meta){
 
   hurr_obs <- merge(x = hurr_obs, y=storm_max_category, by=c("storm_id") , all.x = TRUE)
 
-  #add hur, major, intense
-  hurr_meta$hurricane <- ifelse(hurr_meta$max_category == "5", 1,
-                       ifelse(hurr_obs$max_category == "4", 1,
-                       ifelse(hurr_obs$max_category == "3", 1,
-                       ifelse(hurr_obs$max_category == "2", 1,
-                       ifelse(hurr_obs$max_category == "1", 1, NA)))))
 
-  hurr_meta$hurricane_major <- ifelse(hurr_meta$max_category == "5", 1,
-                      ifelse(hurr_obs$max_category == "4", 1,
-                      ifelse(hurr_obs$max_category == "3", 1,  NA)))
+   hurr_meta$hurricane <- ifelse( as.numeric(hurr_meta$max_category) == 5 |
+                                        as.numeric(hurr_meta$max_category) == 4 |
+                                        as.numeric(hurr_meta$max_category) == 3 |
+                                        as.numeric(hurr_meta$max_category) == 2 |
+                                        as.numeric(hurr_meta$max_category) == 1, 1, NA)
 
-  hurr_meta$hurricane_intense <- ifelse(hurr_meta$max_category == "5", 1,
-                     ifelse(hurr_obs$max_category == "4", 1, NA))
+   hurr_meta$hurricane_major <- ifelse( as.numeric(hurr_meta$max_category) == 5 |
+                                        as.numeric(hurr_meta$max_category) == 4 |
+                                        as.numeric(hurr_meta$max_category) == 3, 1, NA)
+
+   hurr_meta$hurricane_intense <- ifelse(as.numeric(hurr_meta$max_category) == 5 |
+                                         as.numeric(hurr_meta$max_category) == 4, 1, NA)
+
+
 
  return(hurr_meta)
 
