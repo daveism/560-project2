@@ -225,7 +225,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
 
 
     #### INTENSE
-    scatter_intense_wind_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.numeric(hurr_meta_hurricane_wa$year))
+    scatter_intense_wind_fit <- lm( log(hurr_meta_intense_wa$max_wind_ms) ~ as.numeric(hurr_meta_intense_wa$year))
 
     #intense scatter
     scatter_intense_wind <- ggScatterAuto(
@@ -247,7 +247,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
 
 
     #LM fit for max wind and year
-    scatter_intense_wind_weighted_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.numeric(hurr_meta_hurricane_wa$year))
+    scatter_intense_wind_weighted_fit <- lm( log(hurr_meta_intense_wa$max_wind_ms) ~ as.numeric(hurr_meta_intense_wa$year))
 
     #Yearly mean wind M/S Intense
     scatter_yearly_intense_wind_weighted <- ggScatterAutoYearlyWeight(
@@ -294,8 +294,6 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
 
         #LM fit for MEAN max wind and year
         scatter_yearly_intense_wind_fit <- lm( log(year_ace_intense_wa$intense_avg_max_ms) ~ as.numeric(year_ace_intense_wa$year))
-
-
 
 
     log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa$max_wind_ms) ~ as.factor(hurr_meta_intense_wa$year))
@@ -406,7 +404,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
              as.numeric(year_ace_intense_wa$intense_hurricane_count)
            )
 
-     chart_image <- paste("storm_intense_yearly_ace_weighted_1980", "png", sep=".")
+     chart_image <- paste("scatter_yearly_intense_ace_weighted_1980", "png", sep=".")
      chart_image <- file.path(charts_dir, chart_image)
      chart_image <- chart_image[1]
      chart_image <- gsub(" ", "_", chart_image)
@@ -426,7 +424,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
               "NOAA - Hurrdat2 data"
             )
 
-      chart_image <- paste("storm_intense_yearly_ace_1980", "png", sep=".")
+      chart_image <- paste("scatter_yearly_intense_ace_1980", "png", sep=".")
       chart_image <- file.path(charts_dir, chart_image)
       chart_image <- chart_image[1]
       chart_image <- gsub(" ", "_", chart_image)

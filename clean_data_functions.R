@@ -363,7 +363,7 @@ create_ace_data <-  function(hurr_meta){
   year_max_ace$max_ace <- as.numeric(year_max_ace$max_ace)
 
   #NAMED storm count used by ACE TS, Hurricanes, and Subtropical.  Winds > 39 mph
-  cnt_named_temp <- subset(hurr_meta, hurr_meta$max_wind_mph > 39 & hurr_meta$named )
+  cnt_named_temp <- subset(hurr_meta, as.numeric(hurr_meta$max_wind_mph) > 39 & hurr_meta$named )
   year_named_cnt <- aggregate(x=cnt_named_temp$storm_id, by=list(cnt_named_temp$year, cnt_named_temp$basin),FUN=length)
   year_named_cnt <- dplyr::rename(year_named_cnt, year = Group.1, basin = Group.2, named_count = x)
 
@@ -376,7 +376,7 @@ create_ace_data <-  function(hurr_meta){
   year_named_ms_avg <- dplyr::rename(year_named_ms_avg, year = Group.1, basin = Group.2, named_avg_max_ms = x)
 
   #count if hurricanes
-  cnt_hur_temp <- subset(hurr_meta, hurr_meta$max_category >= 1)
+  cnt_hur_temp <- subset(hurr_meta, as.numeric(hurr_meta$max_category) >= 1)
   year_hur_cnt <- aggregate(x=cnt_hur_temp$storm_id, by=list(cnt_hur_temp$year, cnt_hur_temp$basin),FUN=length)
   year_hur_cnt <- dplyr::rename(year_hur_cnt, year = Group.1, basin = Group.2, hurricane_count = x)
 
@@ -389,29 +389,29 @@ create_ace_data <-  function(hurr_meta){
   year_hur_ms_avg <- dplyr::rename(year_hur_ms_avg, year = Group.1, basin = Group.2, hurricane_avg_max_ms = x)
 
   #count of major hurranes Safer simpson Cat 3,4,5
-  cnt_major_temp <- subset(hurr_meta, hurr_meta$max_category >= 3)
+  cnt_major_temp <- subset(hurr_meta, as.numeric(hurr_meta$max_category) >= 3)
   year_major_cnt <- aggregate(x=cnt_major_temp$storm_id, by=list(cnt_major_temp$year, cnt_major_temp$basin),FUN=length)
   year_major_cnt <- dplyr::rename(year_major_cnt, year = Group.1, basin = Group.2, major_hurricane_count = x)
 
   #Major hurricane avg wind in mpg
-  year_major_mph_avg <- aggregate(x=cnt_hur_temp$max_wind_mph, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
+  year_major_mph_avg <- aggregate(x=cnt_major_temp$max_wind_mph, by=list(cnt_major_temp$year, cnt_major_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
   year_major_mph_avg <- dplyr::rename(year_major_mph_avg, year = Group.1, basin = Group.2, major_avg_max_mph = x)
 
   #Major hurricane avg wind in meters per second
-  year_major_ms_avg <- aggregate(x=cnt_hur_temp$max_wind_ms, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
+  year_major_ms_avg <- aggregate(x=cnt_major_temp$max_wind_ms, by=list(cnt_major_temp$year, cnt_major_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
   year_major_ms_avg <- dplyr::rename(year_major_ms_avg, year = Group.1, basin = Group.2, major_avg_max_ms = x)
 
   #count of intense hurranes Safer simpson Cat 4,5
-  cnt_intense_temp <- subset(hurr_meta, hurr_meta$max_category >= 4)
+  cnt_intense_temp <- subset(hurr_meta, as.numeric(hurr_meta$max_category) >= 4)
   year_intense_cnt <- aggregate(x=cnt_intense_temp$storm_id, by=list(cnt_intense_temp$year, cnt_intense_temp$basin),FUN=length)
   year_intense_cnt <- dplyr::rename(year_intense_cnt, year = Group.1, basin = Group.2, intense_hurricane_count = x)
 
   #intense hurricane avg wind in meters per second
-  year_intense_mph_avg <- aggregate(x=cnt_hur_temp$max_wind_mph, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
+  year_intense_mph_avg <- aggregate(x=cnt_intense_temp$max_wind_mph, by=list(cnt_intense_temp$year, cnt_intense_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
   year_intense_mph_avg <- dplyr::rename(year_intense_mph_avg, year = Group.1, basin = Group.2, intense_avg_max_mph = x)
 
   #intense hurricane avg wind in MPH
-  year_intense_ms_avg <- aggregate(x=cnt_hur_temp$max_wind_ms, by=list(cnt_hur_temp$year, cnt_hur_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
+  year_intense_ms_avg <- aggregate(x=cnt_intense_temp$max_wind_ms, by=list(cnt_intense_temp$year, cnt_intense_temp$basin), FUN=mean, na.rm=TRUE, na.action=NULL)
   year_intense_ms_avg <- dplyr::rename(year_intense_ms_avg, year = Group.1, basin = Group.2, intense_avg_max_ms = x)
 
   #meger ace into yearly data frame
