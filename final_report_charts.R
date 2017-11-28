@@ -129,10 +129,10 @@ year_ace_plot <- ggplot() +
     scale_x_discrete(breaks = b_breaks,labels = b_labels) +
 
    #Smoothed Lines
-   geom_smooth(data=year_ace_named_wa, aes(x=as.factor(year), y=ace, group = 1), method = "lm",color="darkgray",se=0) +
-   geom_smooth(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurr_ace, group = 2), method = "lm",color="yellow2",se=0) +
-   geom_smooth(data=year_ace_major_wa, aes(x=as.factor(year), y=major_ace, group = 3), method = "lm",color="darkorange3",se=0) +
-   geom_smooth(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_ace, group = 4), method = "lm",color="firebrick",se=0) +
+   geom_smooth(data=year_ace_named_wa, aes(x=as.factor(year), y=ace, weight=year_ace_named_wa$named_count, group = 1), method = "lm",color="darkgray",se=0) +
+   geom_smooth(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurr_ace, weight=year_ace_hurr_wa$hurricane_count, group = 2), method = "lm",color="yellow2",se=0) +
+   geom_smooth(data=year_ace_major_wa, aes(x=as.factor(year), y=major_ace, year_ace_major_wa$major_hurricane_count, group = 3), method = "lm",color="darkorange3",se=0) +
+   geom_smooth(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_ace, year_ace_intense_wa$intense_hurricane_count, group = 4), method = "lm",color="firebrick",se=0) +
 
    coord_equal() +
    theme_minimal(base_size=theme_base_size) +
@@ -255,7 +255,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
              as.numeric(year_ace_intense_wa$year),
              log(year_ace_intense_wa$intense_avg_max_ms),
              "lm",
-             "Intense Yearly Mean Max Wind M/S (weighted)",
+             "Intense Yearly Mean Max Wind M/S \nWeighted by count",
              "Storm",
              "Mean Max Wind M/S",
              "NOAA - Hurrdat2 data",
@@ -283,7 +283,8 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
                  "Intense Yearly Mean Max Wind M/S",
                  "Storm",
                  "Mean Max Wind M/S",
-                 "NOAA - Hurrdat2 data"
+                 "NOAA - Hurrdat2 data",
+                 as.numeric(year_ace_intense_wa$intense_hurricane_count)
                )
 
                chart_image <- paste("scatter_yearly_intense_wind_1980", "png", sep=".")
@@ -397,7 +398,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
              as.numeric(year_ace_intense_wa$year),
              log(year_ace_intense_wa$intense_ace),
              "lm",
-             "Intense and ACE (Year) (weighted)",
+             "Intense and ACE - Year \nWeighted by count",
              "Storm",
              "ACE",
              "NOAA - Hurrdat2 data",
@@ -421,7 +422,8 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
               "Intense and ACE (Year)",
               "Storm",
               "ACE",
-              "NOAA - Hurrdat2 data"
+              "NOAA - Hurrdat2 data",
+              as.numeric(year_ace_intense_wa$intense_hurricane_count)
             )
 
       chart_image <- paste("scatter_yearly_intense_ace_1980", "png", sep=".")
@@ -491,7 +493,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
              as.numeric(year_ace_major_wa$year),
              log(year_ace_major_wa$major_avg_max_ms),
              "lm",
-             "Major Yearly Mean Max Wind M/S (weighted)",
+             "Major Yearly Mean Max Wind M/S \nWeighted by count",
              "Storm",
              "Mean Max Wind M/S",
              "NOAA - Hurrdat2 data",
@@ -517,7 +519,8 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
              "Major Yearly Mean Max Wind M/S",
              "Storm",
              "Mean Max Wind M/S",
-             "NOAA - Hurrdat2 data"
+             "NOAA - Hurrdat2 data",
+             as.numeric(year_ace_major_wa$major_hurricane_count)
            )
 
     chart_image <- paste("scatter_yearly_major_wind_1980", "png", sep=".")
@@ -629,7 +632,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
              as.numeric(year_ace_major_wa$year),
              log(year_ace_major_wa$major_ace),
              "lm",
-             "Major and ACE (Year) (weighted)",
+             "Major and ACE - Year \nWeighted by count",
              "Storm",
              "ACE",
              "NOAA - Hurrdat2 data",
@@ -655,7 +658,8 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
                   "Major and ACE (Year)",
                   "Storm",
                   "ACE",
-                  "NOAA - Hurrdat2 data"
+                  "NOAA - Hurrdat2 data",
+                  as.numeric(year_ace_major_wa$major_hurricane_count)
                 )
 
           chart_image <- paste("scatter_yearly_major_ace_1980", "png", sep=".")
@@ -722,7 +726,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
              as.numeric(year_ace_hurr_wa$year),
              log(year_ace_hurr_wa$hurricane_avg_max_ms),
              "lm",
-             "Hurricane Yearly Mean Max Wind M/S (weighted)",
+             "Hurricane Yearly Mean Max Wind M/S \nWeighted by count",
              "Storm",
              "Mean Max Wind M/S",
              "NOAA - Hurrdat2 data",
@@ -750,7 +754,8 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
                  "Hurricane Yearly Mean Max Wind M/S",
                  "Storm",
                  "Mean Max Wind M/S",
-                 "NOAA - Hurrdat2 data"
+                 "NOAA - Hurrdat2 data",
+                 as.numeric(year_ace_hurr_wa$hurricane_count)
                )
 
            chart_image <- paste("scatter_yearly_hurricane_wind_1980", "png", sep=".")
@@ -863,7 +868,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
              as.numeric(year_ace_hurr_wa$year),
              log(year_ace_hurr_wa$hurr_ace),
              "lm",
-             "Hurricanes and ACE (Year) (weighted)",
+             "Hurricanes and ACE - Year \nWeighted by count",
              "Storm",
              "ACE",
              "NOAA - Hurrdat2 data",
@@ -890,7 +895,8 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
                  "Hurricanes and ACE (Year)",
                  "Storm",
                  "ACE",
-                 "NOAA - Hurrdat2 data"
+                 "NOAA - Hurrdat2 data",
+                 as.numeric(year_ace_hurr_wa$hurricane_count)
                )
 
          chart_image <- paste("scatter_yearly_hurricane_ace_1980", "png", sep=".")
@@ -982,7 +988,8 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
                      "Named Yearly Mean Max Wind M/S",
                      "Storm",
                      "Mean Max Wind M/S",
-                     "NOAA - Hurrdat2 data"
+                     "NOAA - Hurrdat2 data",
+                     as.numeric(year_ace_named_wa$named_count)
                    )
 
              chart_image <- paste("scatter_yearly_named_wind_1980", "png", sep=".")
@@ -1094,7 +1101,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
                as.numeric(year_ace_named_wa$year),
                log(year_ace_named_wa$ace),
                "lm",
-               "Named and ACE (Year) (weighted)",
+               "Named and ACE - Year \nWeighted by count",
                "Storm",
                "ACE",
                "NOAA - Hurrdat2 data",
@@ -1120,7 +1127,8 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
                "Named and ACE (Year)",
                "Storm",
                "ACE",
-               "NOAA - Hurrdat2 data"
+               "NOAA - Hurrdat2 data",
+               as.numeric(year_ace_named_wa$named_count)
              )
 
        chart_image <- paste("scatter_yearly_named_ace_1980", "png", sep=".")

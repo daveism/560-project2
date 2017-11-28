@@ -107,7 +107,7 @@ ggScatterAuto <-  function(data, xField, yField, method, title,
 }
 
 ggScatterAutoYearly <-  function(data, xField, yField, method, title,
-                       xLabel, yLabel, source){
+                       xLabel, yLabel, source, weight){
 
   b_breaks = c("1980", "1985", "1990", "1995", "2000",  "2005", "2010", "2015" )
   b_labels = c("1980", "1985", "1990", "1995", "2000",  "2005", "2010", "2015" )
@@ -116,10 +116,11 @@ ggScatterAutoYearly <-  function(data, xField, yField, method, title,
   r2 <- format(summary(m)$r.squared, digits = 3)
 
   ggplot(data, aes(x = xField, y = yField, group = 1)) +
-  geom_smooth(method = method, color="#008fd5", se=FALSE) +
-  geom_point(color="#b2ddf2", alpha=.7, size=3) +
-  geom_point(shape = 1, colour="#008fd5", alpha=.5, size=3) +
+  geom_point(color="#b2ddf2", alpha=.7, size=weight) +
+  geom_point(shape = 1, colour="#008fd5", alpha=.5, size=weight) +
     # scale_x_discrete(breaks = b_breaks,labels = b_labels) +
+
+  geom_smooth(method = method, color="#008fd5", se=FALSE) +
 
   theme_minimal(base_size=theme_base_size) +
   labs(title= paste(title),
@@ -145,10 +146,11 @@ ggScatterAutoYearlyWeight <-  function(data, xField, yField, method, title,
   r2 <- format(summary(m)$r.squared, digits = 3)
 
   ggplot(data, aes(x = xField, y = yField, group = 1)) +
-  geom_smooth(method = method, color="#008fd5", aes(weight=weight), se=FALSE) +
-  geom_point(color="#b2ddf2", alpha=.7, size=3) +
-  geom_point(shape = 1, colour="#008fd5", alpha=.5, size=3) +
+  geom_point(color="#b2ddf2", alpha=.7, size=weight) +
+  geom_point(shape = 1, colour="#008fd5", alpha=.5, size=weight) +
     # scale_x_discrete(breaks = b_breaks,labels = b_labels) +
+
+ geom_smooth(method = method, color="#008fd5", aes(weight=weight), se=FALSE) +
 
   theme_minimal(base_size=theme_base_size) +
   labs(title= paste(title),
