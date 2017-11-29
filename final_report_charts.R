@@ -15,7 +15,7 @@ year_ace_intense_wa <- subset(year_ace, year_ace$basin == "Western Atlantic"  & 
 cols <- c("Named Storms" = "gray", "Hurricanes" = "yellow", "Major Hurricanes" = "darkorange2","Intense Hurricanes" = "firebrick1")
 cols2 <- c("Named" = "gray", "Hurricanes" = "yellow", "Major" = "darkorange2","Intense" = "firebrick1")
 
-year_ace_wa <- subset(year_ace, year_ace$basin == "Western Atlantic")
+year_ace_wa <- subset(year_ace, year_ace$basin == "Western Atlantic" )
 singlecols <- c("All Storms" = "darkorange2")
 barcount <- ggBarStormsYear(year_ace_wa, "Total Named Storms", year_ace_wa$year, year_ace_wa$named_count, "Year", "Count", "NOAA - Hurrdat2 data")
 
@@ -75,12 +75,13 @@ linecount <- ggplot() +
 
 
 #ACE for all all stroms all years
+year_ace_wa80 <- subset( year_ace_wa , year_ace_wa$year >= 1980)
 all_ace <- ggplot() +
-   geom_line(data=year_ace_wa, aes(x=year, y=ace, group = 1, colour="All Storms")) +
-   geom_point(data=year_ace_wa, aes(x=year, y=ace, group = 1), color="darkorange2", alpha=3/4) +
+   geom_line(data=year_ace_wa80, aes(x=year, y=ace, group = 1, colour="All Storms")) +
+   geom_point(data=year_ace_wa80, aes(x=year, y=ace, group = 1), color="darkorange2", alpha=3/4) +
     labs( color = "Storms" ) +
 
-   geom_smooth(data=year_ace_wa, aes(x=year, y=ace, group = 1), method = "lm",color="darkorange3",se=0) +
+   geom_smooth(data=year_ace_wa80, aes(x=year, y=ace, group = 1), method = "lm",color="darkorange3",se=0) +
     scale_colour_manual( values = singlecols) +
 
    coord_equal() +
@@ -129,10 +130,10 @@ year_ace_plot <- ggplot() +
     scale_x_discrete(breaks = b_breaks,labels = b_labels) +
 
    #Smoothed Lines
-   geom_smooth(data=year_ace_named_wa, aes(x=as.factor(year), y=ace, weight=year_ace_named_wa$named_count, group = 1), method = "lm",color="darkgray",se=0) +
-   geom_smooth(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurr_ace, weight=year_ace_hurr_wa$hurricane_count, group = 2), method = "lm",color="yellow2",se=0) +
-   geom_smooth(data=year_ace_major_wa, aes(x=as.factor(year), y=major_ace, year_ace_major_wa$major_hurricane_count, group = 3), method = "lm",color="darkorange3",se=0) +
-   geom_smooth(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_ace, year_ace_intense_wa$intense_hurricane_count, group = 4), method = "lm",color="firebrick",se=0) +
+   geom_smooth(data=year_ace_named_wa, aes(x=as.factor(year), y=ace, weight = year_ace_named_wa$named_count, group = 1), method = "lm",color="darkgray",se=0) +
+   geom_smooth(data=year_ace_hurr_wa, aes(x=as.factor(year), y=hurr_ace, weight = year_ace_hurr_wa$hurricane_count, group = 2), method = "lm",color="yellow2",se=0) +
+   geom_smooth(data=year_ace_major_wa, aes(x=as.factor(year), y=major_ace,  weight = year_ace_major_wa$major_hurricane_count, group = 3), method = "lm",color="darkorange3",se=0) +
+   geom_smooth(data=year_ace_intense_wa, aes(x=as.factor(year), y=intense_ace, weight =  year_ace_intense_wa$intense_hurricane_count, group = 4), method = "lm",color="firebrick",se=0) +
 
    coord_equal() +
    theme_minimal(base_size=theme_base_size) +
@@ -1164,6 +1165,50 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
       scatter_named_ace_fit <- lm( log(hurr_meta_named_wa$ace) ~ as.numeric(hurr_meta_named_wa$year))
 
 
+
+### 3
+
+hurr_meta_cat3 <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hurr_meta$year >= 1980 & hurr_meta$max_category == 3 )
+#named scatter hurr_meta_cat3_wind <-
+hurr_meta_cat3_wind <- ggScatterAuto(
+  hurr_meta_cat3,
+  as.numeric(hurr_meta_cat3$year),
+  log(hurr_meta_cat3$max_wind_ms),
+  "lm",
+  "Category 3 and Max Wind M/S",
+  "Storm",
+  "Max Wind M/S",
+  "NOAA - Hurrdat2 data"
+)
+
+chart_image <- paste("scatter_cat3_wind_1980", "png", sep=".")
+chart_image <- file.path(charts_dir, chart_image)
+chart_image <- chart_image[1]
+chart_image <- gsub(" ", "_", chart_image)
+ggsave(chart_image, hurr_meta_cat3_wind, width=image_width, height=image_height)
+#
+#
+hurr_meta_cat4 <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hurr_meta$year >= 1980 & hurr_meta$max_category == 4 )
+
+ hurr_meta_cat4_wind <- ggScatterAuto(
+  hurr_meta_cat4,
+  as.numeric(hurr_meta_cat4$year),
+  log(hurr_meta_cat4$max_wind_ms),
+  "lm",
+  "Category 4 and Max Wind M/S",
+  "Storm",
+  "Max Wind M/S",
+  "NOAA - Hurrdat2 data"
+)
+
+chart_image <- paste("scatter_cat4_wind_1980", "png", sep=".")
+chart_image <- file.path(charts_dir, chart_image)
+chart_image <- chart_image[1]
+chart_image <- gsub(" ", "_", chart_image)
+ggsave(chart_image, hurr_meta_cat4_wind, width=image_width, height=image_height)
+
+
+###
       summary(scatter_intense_wind_fit)
       summary(scatter_yearly_intense_wind_fit)
       summary(scatter_yearly_intense_wind_weighted_fit)
@@ -1171,6 +1216,13 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
       summary(scatter_yearly_intense_ace_fit)
       summary(scatter_yearly_intense_ace_weighted_fit)
       summary(scatter_intense_ace_fit)
+
+      #
+      summary(gls( log(max_wind_ms) ~ as.numeric(year) , data=hurr_meta_intense_wa))
+      summary(gls( log(ace) ~ as.numeric(year) , data=hurr_meta_intense_wa))
+      summary(gls( ace ~ as.numeric(year) , data=hurr_meta_intense_wa))
+      summary(gls(log(intense_ace) ~ (year),  weights = ~intense_hurricane_count, data=year_ace_intense_wa))
+      summary(gls(log(major_ace) ~ (year),  weights = ~major_hurricane_count, data= year_ace_major_wa))
 
       summary(scatter_major_wind_fit)
       summary(scatter_yearly_major_wind_fit)

@@ -233,14 +233,14 @@ grid()
 
 
 #############
-
-startyear <- 1950
-
-year_ace_intense_wa <- subset(year_ace, year_ace$basin == "Western Atlantic"  & year_ace$year >= startyear  & !is.na(year_ace$intense_ace))
-plot(year_ace_intense_wa$year , year_ace_intense_wa$intense_ace)
-abline(lm( year_ace_intense_wa$intense_ace ~ year_ace_intense_wa$year), col = "red", lwd = 2)
-
-
-year_ace_intense_wa <- subset(year_ace, year_ace$basin == "Western Atlantic"  & year_ace$year >= startyear  & !is.na(year_ace$intense_ace))
-plot(year_ace_intense_wa$year , year_ace_intense_wa$intense_ace)
-abline(lm( year_ace_intense_wa$intense_ace ~ year_ace_intense_wa$year, weights = year_ace_intense_wa$intense_hurricane_count ), col = "red", lwd = 2)
+#
+# startyear <- 1980
+#
+# year_ace_intense_wa <- subset(year_ace, year_ace$basin == "Western Atlantic"  & year_ace$year >= startyear  & !is.na(year_ace$intense_ace))
+# plot(year_ace_intense_wa$year , year_ace_intense_wa$intense_ace)
+# abline(lm( year_ace_intense_wa$intense_ace ~ year_ace_intense_wa$year), col = "red", lwd = 2)
+#
+#
+# year_ace_intense_wa <- subset(year_ace, year_ace$basin == "Western Atlantic"  & year_ace$year >= startyear  & !is.na(year_ace$intense_ace))
+# plot(year_ace_intense_wa$year , year_ace_intense_wa$intense_ace)
+# abline(lm( year_ace_intense_wa$intense_ace ~ year_ace_intense_wa$year, weights = year_ace_intense_wa$intense_hurricane_count ), col = "red", lwd = 2)
