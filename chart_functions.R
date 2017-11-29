@@ -25,7 +25,7 @@ ggScatterAutoNum <-  function(data, xField, yField, method, title,
   r2 <- format(summary(m)$r.squared, digits = 3)
   # pearsons <- format(cor(xField, yField, use = "complete.obs"), digits = 3)
 
-  ggplot(data, aes(x = as.factor(xField), y = yField, group = 1)) +
+  ggplot(data, aes(x = xField, y = yField, group = 1)) +
   geom_smooth(method = method,color="#008fd5",se=FALSE) +
   geom_point(color="#b2ddf2", alpha=.7, size=3) +
   geom_point(shape = 1, colour="#008fd5", alpha=.5, size=3) +
@@ -87,7 +87,7 @@ ggScatterAuto <-  function(data, xField, yField, method, title,
   r2 <- format(summary(m)$r.squared, digits = 3)
   summary(m)
 
-  ggplot(data, aes(x = xField, y = yField, group = 1)) +
+  ggplot(data, aes(x = xField, y = yField)) +
   geom_smooth(method = method,color="#008fd5",se=FALSE) +
   geom_point(color="#b2ddf2", alpha=.7, size=3) +
   geom_point(shape = 1, colour="#008fd5", alpha=.5, size=3) +

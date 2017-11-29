@@ -1168,6 +1168,47 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
 
 ### 3
 
+hurr_meta_cat1 <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hurr_meta$year >= 1980 & hurr_meta$max_category == 1 )
+
+ hurr_meta_cat1_wind <- ggScatterAuto(
+  hurr_meta_cat1,
+  as.numeric(hurr_meta_cat1$year),
+  log(hurr_meta_cat1$max_wind_ms),
+  "lm",
+  "Category 1 and Max Wind M/S",
+  "Storm",
+  "Max Wind M/S",
+  "NOAA - Hurrdat2 data"
+)
+
+chart_image <- paste("scatter_cat1_wind_1980", "png", sep=".")
+chart_image <- file.path(charts_dir, chart_image)
+chart_image <- chart_image[1]
+chart_image <- gsub(" ", "_", chart_image)
+ggsave(chart_image, hurr_meta_cat1_wind, width=image_width, height=image_height)
+
+
+hurr_meta_cat2 <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hurr_meta$year >= 1980 & hurr_meta$max_category == 2 )
+
+ hurr_meta_cat2_wind <- ggScatterAuto(
+  hurr_meta_cat2,
+  as.numeric(hurr_meta_cat2$year),
+  log(hurr_meta_cat2$max_wind_ms),
+  "lm",
+  "Category 2 and Max Wind M/S",
+  "Storm",
+  "Max Wind M/S",
+  "NOAA - Hurrdat2 data"
+)
+
+chart_image <- paste("scatter_cat2_wind_1980", "png", sep=".")
+chart_image <- file.path(charts_dir, chart_image)
+chart_image <- chart_image[1]
+chart_image <- gsub(" ", "_", chart_image)
+ggsave(chart_image, hurr_meta_cat2_wind, width=image_width, height=image_height)
+
+
+
 hurr_meta_cat3 <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hurr_meta$year >= 1980 & hurr_meta$max_category == 3 )
 #named scatter hurr_meta_cat3_wind <-
 hurr_meta_cat3_wind <- ggScatterAuto(
@@ -1206,6 +1247,47 @@ chart_image <- file.path(charts_dir, chart_image)
 chart_image <- chart_image[1]
 chart_image <- gsub(" ", "_", chart_image)
 ggsave(chart_image, hurr_meta_cat4_wind, width=image_width, height=image_height)
+
+hurr_meta_cat5 <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hurr_meta$year >= 1980 & hurr_meta$max_category == 5 )
+
+ hurr_meta_cat5_wind <- ggScatterAuto(
+  hurr_meta_cat5,
+  as.numeric(hurr_meta_cat5$year),
+  log(hurr_meta_cat5$max_wind_ms),
+  "lm",
+  "Category 5 and Max Wind M/S",
+  "Storm",
+  "Max Wind M/S",
+  "NOAA - Hurrdat2 data"
+)
+
+chart_image <- paste("scatter_cat5_wind_1980", "png", sep=".")
+chart_image <- file.path(charts_dir, chart_image)
+chart_image <- chart_image[1]
+chart_image <- gsub(" ", "_", chart_image)
+ggsave(chart_image, hurr_meta_cat5_wind, width=image_width, height=image_height)
+
+
+hurr_meta_cat_3_4 <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hurr_meta$year >= 1980 & ( hurr_meta$max_category == 4 | hurr_meta$max_category == 3) )
+
+ hurr_meta_cat_3_4_wind <- ggScatterAuto(
+  hurr_meta_cat_3_4,
+  as.numeric(hurr_meta_cat_3_4$year),
+  log(hurr_meta_cat_3_4$max_wind_ms),
+  "lm",
+  "Category 3,4 and Max Wind M/S",
+  "Storm",
+  "Max Wind M/S",
+  "NOAA - Hurrdat2 data"
+)
+
+chart_image <- paste("scatter_cat_3_4_wind_1980", "png", sep=".")
+chart_image <- file.path(charts_dir, chart_image)
+chart_image <- chart_image[1]
+chart_image <- gsub(" ", "_", chart_image)
+ggsave(chart_image, hurr_meta_cat_3_4_wind, width=image_width, height=image_height)
+
+scatter_cat_3_4_fit <- lm( log(hurr_meta_cat_3_4$max_wind_ms) ~ as.numeric(hurr_meta_cat_3_4$year))
 
 
 ###

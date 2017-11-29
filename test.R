@@ -1,34 +1,45 @@
 
   #all storms
   LMI.df <- subset(hurr_meta, !is.na(hurr_meta$max_wind_ms) & hurr_meta$basin == "Western Atlantic")
-  LMI.df <- subset(hurr_meta, !is.na(hurr_meta$max_wind_ms) )
-  LMI.df$WmaxS <- as.numeric(LMI.df$ace)
+  LMI.df$WmaxS <- as.numeric(LMI.df$max_wind_ms)
   LMI.df$SYear <- as.numeric(LMI.df$year)
   LMI.df$WmaxS_diff <- as.numeric(c(NA,diff(LMI.df$WmaxS)))
   LMI.df$WmaxS_diff <-  as.numeric(LMI.df$WmaxS_diff)
   StartYear <- 1980
   EndYear <- 2016
-  intensity_level <- LMI.df$hurricane_intense
+  intensity_level <- LMI.df$named
 
   #intense
-  LMI.dfi <- subset( LMI.df, intensity_level == 1)
+  # LMI.dfi <- subset( LMI.df, intensity_level == 1)
+  LMI.dfi <- subset( LMI.df,LMI.df$max_category == 3  | LMI.df$max_category == 4  )
   LMI.dfi <- subset( LMI.dfi , SYear >= StartYear)
 
 
+  par(mfrow=c(3,1))
+
   plot(LMI.dfi$SYear,log(LMI.dfi$WmaxS))
   abline(lm( log(LMI.dfi$WmaxS) ~ LMI.dfi$SYear), col = "red", lwd = 2)
-  mfit <- lm( log(LMI.dfi$WmaxS) ~ LMI.dfi$SYear)
 
-  plot(LMI.dfi$SYear, LMI.dfi$WmaxS_diff)
-  abline(lm( log(LMI.dfi$WmaxS_diff) ~ LMI.dfi$SYear), col = "red", lwd = 2)
-  mfitdiff <- lm( log(LMI.dfi$WmaxS_diff) ~ LMI.dfi$SYear)
+  # par(mfrow=c(1,1))
+
+  diftemp <- subset(LMI.dfi, !is.infinite(LMI.dfi$WmaxS_diff))
+  plot(diftemp$SYear, diftemp$WmaxS_diff)
+  abline(lm( diftemp$WmaxS_diff ~ diftemp$SYear), col = "red", lwd = 2)
+
+  # par(mfrow=c(1,1))
 
   plot(LMI.dfi$SYear,log(LMI.dfi$ace))
   abline(lm( log(LMI.dfi$ace) ~ LMI.dfi$SYear), col = "red", lwd = 2)
+
+
+  mfit <- lm( log(LMI.dfi$WmaxS) ~ LMI.dfi$SYear)
+  mfitdiff <- lm( LMI.dfi$WmaxS_diff ~ LMI.dfi$SYear)
   mfitace <- lm( log(LMI.dfi$ace) ~ LMI.dfi$SYear)
 
   W =  LMI.dfi$WmaxS
   Year =  LMI.dfi$SYear
+
+  par(mfrow=c(1,1))
 
   quantile( LMI.dfi$WmaxS, c(0.25, 0.75))
 
@@ -117,15 +128,16 @@ plot.rq.process(model)
 
 model = rq(W ~ Year, tau = seq(0.025, 0.975, 0.05))
 labs = round(quantile(W, seq(0.2, 0.8, 0.2)))
-par(las = 1, mgp = c(2, 0.4, 0), tcl = -0.3)
-plot(summary(model, se = "boot"), parm = 2, lcol = "transparent", xaxt = "n",
-    mar = c(5, 5, 4, 2) + 0.1, pch = 16, lwd = 2, ylab = expression(paste(beta[Year],
-        " [m/s/C]")), xlab = expression(paste("Wind speed quantile [", tau,
-        "]")), main = "")
-grid()
-abline(h = 0)
-axis(3, at = seq(0.2, 0.8, 0.2), labels = labs)
-mtext("Test Lifetime highest wind speed [m/s]", side = 3, line = 2)
+
+# par(las = 1, mgp = c(2, 0.4, 0), tcl = -0.3)
+# plot(summary(model, se = "boot"), parm = 2, lcol = "transparent", xaxt = "n",
+#     mar = c(5, 5, 4, 2) + 0.1, pch = 16, lwd = 2, ylab = expression(paste(beta[Year],
+#         " [m/s/C]")), xlab = expression(paste("Wind speed quantile [", tau,
+#         "]")), main = "")
+# grid()
+# abline(h = 0)
+# axis(3, at = seq(0.2, 0.8, 0.2), labels = labs)
+# mtext("Test Lifetime highest wind speed [m/s]", side = 3, line = 2)
 
 par(mfrow=c(1,1))
 
