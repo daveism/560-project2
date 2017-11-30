@@ -1,3 +1,4 @@
+#used code from https://rpubs.com/jelsner/5342
 
   #all storms
   LMI.df <- subset(hurr_meta, !is.na(hurr_meta$max_wind_ms) & hurr_meta$basin == "Western Atlantic")
