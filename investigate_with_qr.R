@@ -1,4 +1,18 @@
 #used code from https://rpubs.com/jelsner/5342
+#forsome reason this fails running with source, you will have to copy and paste.
+
+graphics.off()
+par("mar")
+par(mar=c(1,1,1,1))
+
+if (!is.installed("ismev")){ install.packages("ismev") }
+if (!is.installed("mgcv")){ install.packages("mgcv") }
+if (!is.installed("quantreg")){ install.packages("quantreg") }
+
+
+library(ismev)
+library(mgcv)
+library(quantreg)
 
   #all storms
   LMI.df <- subset(hurr_meta, !is.na(hurr_meta$max_wind_ms) & hurr_meta$basin == "Western Atlantic")
@@ -6,7 +20,7 @@
   LMI.df$SYear <- as.numeric(LMI.df$year)
   LMI.df$WmaxS_diff <- as.numeric(c(NA,diff(LMI.df$WmaxS)))
   LMI.df$WmaxS_diff <-  as.numeric(LMI.df$WmaxS_diff)
-  StartYear <- 1980
+  StartYear <- 1970
   EndYear <- 2016
   # intensity_level <- LMI.df$named
 
@@ -98,6 +112,8 @@
   model = rq(W ~  LMI.dfi$SYear, tau = seq(0.025, 0.975, 0.05))
 
   par(mfrow=c(1,1))
+
+par(.pardefault)
 
 W = LMI.dfi$WmaxS
 hist(W, main = "", las = 1, col = "gray", border = "white", xlab = "Wind Speed (m/s)")
@@ -242,6 +258,7 @@ mean(W[W >= 60] - 60)
 
 mrl.plot(W)
 grid()
+
 
 
 

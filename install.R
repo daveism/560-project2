@@ -15,6 +15,7 @@ if (!is.installed("maptools")){ install.packages("maptools") }
 if (!is.installed("sp")){ install.packages("sp") }
 if (!is.installed("leaflet")){ install.packages("leaflet") }
 if (!is.installed("gridExtra")){ install.packages("gridExtra") }
+if (!is.installed("nlme")){ install.packages("nlme") }
 
 
 #add refrence to library
@@ -28,6 +29,6 @@ library(maptools)
 library(maps)
 library(sp)
 library(leaflet)
-library(gridExtra)
+library(nlme)
 
 options(scipen = 999)
