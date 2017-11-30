@@ -8,11 +8,12 @@ par(mar=c(1,1,1,1))
 if (!is.installed("ismev")){ install.packages("ismev") }
 if (!is.installed("mgcv")){ install.packages("mgcv") }
 if (!is.installed("quantreg")){ install.packages("quantreg") }
-
+if (!is.installed("xtable")){ install.packages("xtable") }
 
 library(ismev)
 library(mgcv)
 library(quantreg)
+library(xtable)
 
   #all storms
   LMI.df <- subset(hurr_meta, !is.na(hurr_meta$max_wind_ms) & hurr_meta$basin == "Western Atlantic")
