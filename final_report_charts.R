@@ -87,7 +87,7 @@ all_ace <- ggplot() +
    coord_equal() +
    theme_minimal(base_size=theme_base_size) +
    labs(
-     title = "ACE Index Since 1850",
+     title = "ACE Index Since 1980",
         x = "Year",
         y = "ACE",
       caption=paste("Source:","NOAA - Hurrdat2 data")) +
@@ -191,9 +191,9 @@ year_ace_plot <- ggplot() +
     theme_minimal(base_size=theme_base_size) +
 
     labs(
-      title = "Mean Max Wind Speed M/S Since 1980",
+      title = "Mean Max Wind Speed m/s Since 1980",
          x = "Year",
-         y = "Max Wind Speed M/S",
+         y = "Max Wind Speed m/s",
        caption=paste("Source:","NOAA - Hurrdat2 data")) +
 
     theme(axis.text.x = element_text(angle = 90, hjust = 1) ,
@@ -234,9 +234,9 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
       as.numeric(hurr_meta_intense_wa$year),
       log(hurr_meta_intense_wa$max_wind_ms),
       "lm",
-      "Intense and Max Wind M/S",
+      "Intense and Max Wind m/s",
       "Storm",
-      "Max Wind M/S",
+      "Max Wind m/s",
       "NOAA - Hurrdat2 data"
     )
 
@@ -250,15 +250,15 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
     #LM fit for max wind and year
     scatter_intense_wind_weighted_fit <- lm( log(hurr_meta_intense_wa$max_wind_ms) ~ as.numeric(hurr_meta_intense_wa$year))
 
-    #Yearly mean wind M/S Intense
+    #Yearly mean wind since 1850 Intense
     scatter_yearly_intense_wind_weighted <- ggScatterAutoYearlyWeight(
              year_ace_intense_wa,
              as.numeric(year_ace_intense_wa$year),
              log(year_ace_intense_wa$intense_avg_max_ms),
              "lm",
-             "Intense Yearly Mean Max Wind M/S \nWeighted by count",
+             "Intense Yearly Mean Max Wind m/s \nWeighted by count",
              "Storm",
-             "Mean Max Wind M/S",
+             "Mean Max Wind m/s",
              "NOAA - Hurrdat2 data",
              as.numeric(year_ace_intense_wa$intense_hurricane_count)
            )
@@ -275,15 +275,15 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
 
 
 
-        #Yearly mean wind M/S Intense
+        #Yearly mean wind m/s Intense
         scatter_yearly_intense_wind <- ggScatterAutoYearly(
                  year_ace_intense_wa,
                  as.numeric(year_ace_intense_wa$year),
                  log(year_ace_intense_wa$intense_avg_max_ms),
                  "lm",
-                 "Intense Yearly Mean Max Wind M/S",
+                 "Intense Yearly Mean Max Wind m/s",
                  "Storm",
-                 "Mean Max Wind M/S",
+                 "Mean Max Wind m/s",
                  "NOAA - Hurrdat2 data",
                  as.numeric(year_ace_intense_wa$intense_hurricane_count)
                )
@@ -333,7 +333,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
       log_max_wind_fit_intense$year,
       log_max_wind_fit_intense$coefficient,
       "lm",
-      "Intense Coefficients of Max Wind M/S",
+      "Intense Coefficients of Max Wind m/s",
       "Year",
       "Coefficients",
       "NOAA - Hurrdat2 data"
@@ -351,7 +351,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
       log_max_wind_fit_intense$year,
       log_max_wind_fit_intense$coefficient,
       "loess",
-      "Intense Coefficients of Max Wind M/S",
+      "Intense Coefficients of Max Wind m/s",
       "Year",
       "Coefficients",
       "NOAA - Hurrdat2 data"
@@ -372,9 +372,9 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
      theme_minimal(base_size=theme_base_size) +
 
      labs(
-       title = "Intense and Max Wind M/S",
+       title = "Intense and Max Wind m/s",
           x = "Year",
-          y = "Max Wind Speed M/S",
+          y = "Max Wind Speed m/s",
         caption=paste("Source:","NOAA - Hurrdat2 data")) +
 
      theme(axis.text.x = element_text(angle = 90, hjust = 1) ,
@@ -472,9 +472,9 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
       as.numeric(hurr_meta_major_wa$year),
       log(hurr_meta_major_wa$max_wind_ms),
       "lm",
-      "Major and Max Wind M/S",
+      "Major and Max Wind m/s",
       "Storm",
-      "Max Wind M/S",
+      "Max Wind m/s",
       "NOAA - Hurrdat2 data"
     )
 
@@ -488,15 +488,15 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
 
     scatter_major_wind_fit <- lm( log(hurr_meta_major_wa$max_wind_ms) ~ as.numeric(hurr_meta_major_wa$year))
 
-    #Yearly mean wind M/S major
+    #Yearly mean wind m/s major
     scatter_yearly_major_weighted_wind <- ggScatterAutoYearlyWeight(
              year_ace_major_wa,
              as.numeric(year_ace_major_wa$year),
              log(year_ace_major_wa$major_avg_max_ms),
              "lm",
-             "Major Yearly Mean Max Wind M/S \nWeighted by count",
+             "Major Yearly Mean Max Wind m/s \nWeighted by count",
              "Storm",
-             "Mean Max Wind M/S",
+             "Mean Max Wind m/s",
              "NOAA - Hurrdat2 data",
              as.numeric(year_ace_major_wa$major_hurricane_count)
            )
@@ -511,15 +511,15 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
     scatter_yearly_major_wind_weighted_fit <- lm( log(year_ace_major_wa$major_avg_max_ms) ~ as.numeric(year_ace_major_wa$year), weights = as.numeric(as.numeric(year_ace_major_wa$major_hurricane_count)))
 
 
-    #Yearly mean wind M/S major
+    #Yearly mean wind m/s major
     scatter_yearly_major_wind <- ggScatterAutoYearly(
              year_ace_major_wa,
              as.numeric(year_ace_major_wa$year),
              log(year_ace_major_wa$major_avg_max_ms),
              "lm",
-             "Major Yearly Mean Max Wind M/S",
+             "Major Yearly Mean Max Wind m/s",
              "Storm",
-             "Mean Max Wind M/S",
+             "Mean Max Wind m/s",
              "NOAA - Hurrdat2 data",
              as.numeric(year_ace_major_wa$major_hurricane_count)
            )
@@ -568,7 +568,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
       log_max_wind_fit_major$year,
       log_max_wind_fit_major$coefficient,
       "lm",
-      "Major and Coefficients of Max Wind M/S",
+      "Major and Coefficients of Max Wind m/s",
       "Year",
       "Coefficients",
       "NOAA - Hurrdat2 data"
@@ -586,7 +586,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
       log_max_wind_fit_major$year,
       log_max_wind_fit_major$coefficient,
       "loess",
-      "Major and Coefficients of Max Wind M/S",
+      "Major and Coefficients of Max Wind m/s",
       "Year",
       "Coefficients",
       "NOAA - Hurrdat2 data"
@@ -606,9 +606,9 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
      theme_minimal(base_size=theme_base_size) +
 
      labs(
-       title = "Major and Max Wind M/S",
+       title = "Major and Max Wind m/s",
           x = "Year",
-          y = "Max Wind Speed M/S",
+          y = "Max Wind Speed m/s",
         caption=paste("Source:","NOAA - Hurrdat2 data")) +
 
      theme(axis.text.x = element_text(angle = 90, hjust = 1) ,
@@ -707,9 +707,9 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
       as.numeric(hurr_meta_hurricane_wa$year),
       log(hurr_meta_hurricane_wa$max_wind_ms),
       "lm",
-      "Hurricanes and Max Wind M/S",
+      "Hurricanes and Max Wind m/s",
       "Storm",
-      "Max Wind M/S",
+      "Max Wind m/s",
       "NOAA - Hurrdat2 data"
     )
 
@@ -721,15 +721,15 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
 
     scatter_hurricane_wind_fit <- lm( log(hurr_meta_hurricane_wa$max_wind_ms) ~ as.numeric(hurr_meta_hurricane_wa$year))
 
-    #Yearly mean wind M/S major
+    #Yearly mean wind m/s major
     scatter_yearly_hurricane_weighted_wind <- ggScatterAutoYearlyWeight(
              year_ace_hurr_wa,
              as.numeric(year_ace_hurr_wa$year),
              log(year_ace_hurr_wa$hurricane_avg_max_ms),
              "lm",
-             "Hurricane Yearly Mean Max Wind M/S \nWeighted by count",
+             "Hurricane Yearly Mean Max Wind m/s \nWeighted by count",
              "Storm",
-             "Mean Max Wind M/S",
+             "Mean Max Wind m/s",
              "NOAA - Hurrdat2 data",
              as.numeric(year_ace_hurr_wa$hurricane_count)
            )
@@ -746,15 +746,15 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
 
 
 
-        #Yearly mean wind M/S major
+        #Yearly mean wind m/s major
         scatter_yearly_hurricane_wind <- ggScatterAutoYearly(
                  year_ace_hurr_wa,
                  as.numeric(year_ace_hurr_wa$year),
                  log(year_ace_hurr_wa$hurricane_avg_max_ms),
                  "lm",
-                 "Hurricane Yearly Mean Max Wind M/S",
+                 "Hurricane Yearly Mean Max Wind m/s",
                  "Storm",
-                 "Mean Max Wind M/S",
+                 "Mean Max Wind m/s",
                  "NOAA - Hurrdat2 data",
                  as.numeric(year_ace_hurr_wa$hurricane_count)
                )
@@ -802,7 +802,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
       log_max_wind_fit_hurricane$year,
       log_max_wind_fit_hurricane$coefficient,
       "lm",
-      "Hurricanes and Coefficients of Max Wind M/S",
+      "Hurricanes and Coefficients of Max Wind m/s",
       "Year",
       "Coefficient ",
       "NOAA - Hurrdat2 data"
@@ -820,7 +820,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
       log_max_wind_fit_hurricane$year,
       log_max_wind_fit_hurricane$coefficient,
       "loess",
-      "Hurricanes and Coefficients of Max Wind M/S",
+      "Hurricanes and Coefficients of Max Wind m/s",
       "Year",
       "Coefficient ",
       "NOAA - Hurrdat2 data"
@@ -841,9 +841,9 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
          theme_minimal(base_size=theme_base_size) +
 
          labs(
-           title = "Hurricanes and Max Wind M/S",
+           title = "Hurricanes and Max Wind m/s",
               x = "Year",
-              y = "Max Wind Speed M/S",
+              y = "Max Wind Speed m/s",
             caption=paste("Source:","NOAA - Hurrdat2 data")) +
 
          theme(axis.text.x = element_text(angle = 90, hjust = 1) ,
@@ -942,9 +942,9 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
         as.numeric(hurr_meta_named_wa$year),
         log(hurr_meta_named_wa$max_wind_ms),
         "lm",
-        "Named and Max Wind M/S",
+        "Named and Max Wind m/s",
         "Storm",
-        "Max Wind M/S",
+        "Max Wind m/s",
         "NOAA - Hurrdat2 data"
       )
 
@@ -956,15 +956,15 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
 
       scatter_named_wind_fit <- lm( log(hurr_meta_named_wa$max_wind_ms) ~ as.numeric(hurr_meta_named_wa$year))
 
-      #Yearly mean wind M/S major
+      #Yearly mean wind m/s major
       scatter_yearly_named_weighted_wind <- ggScatterAutoYearlyWeight(
                year_ace_named_wa,
                as.numeric(year_ace_named_wa$year),
                log(year_ace_named_wa$named_avg_max_ms),
                "lm",
-               "Named Yearly Mean Max Wind M/S (weighted)",
+               "Named Yearly Mean Max Wind m/s (weighted)",
                "Storm",
-               "Mean Max Wind M/S",
+               "Mean Max Wind m/s",
                "NOAA - Hurrdat2 data",
                as.numeric(year_ace_named_wa$named_count)
              )
@@ -980,15 +980,15 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
 
 
 
-            #Yearly mean wind M/S major
+            #Yearly mean wind m/s major
             scatter_yearly_named_wind <- ggScatterAutoYearly(
                      year_ace_named_wa,
                      as.numeric(year_ace_named_wa$year),
                      log(year_ace_named_wa$named_avg_max_ms),
                      "lm",
-                     "Named Yearly Mean Max Wind M/S",
+                     "Named Yearly Mean Max Wind m/s",
                      "Storm",
-                     "Mean Max Wind M/S",
+                     "Mean Max Wind m/s",
                      "NOAA - Hurrdat2 data",
                      as.numeric(year_ace_named_wa$named_count)
                    )
@@ -1035,7 +1035,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
         log_max_wind_fit_named$year,
         log_max_wind_fit_named$coefficient,
         "lm",
-        "Named and Coefficients of Max Wind M/S",
+        "Named and Coefficients of Max Wind m/s",
         "Year",
         "Coefficient",
         "NOAA - Hurrdat2 data"
@@ -1053,7 +1053,7 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
         log_max_wind_fit_named$year,
         log_max_wind_fit_named$coefficient,
         "loess",
-        "Named and Coefficients of Max Wind M/S",
+        "Named and Coefficients of Max Wind m/s",
         "Year",
         "Coefficient",
         "NOAA - Hurrdat2 data"
@@ -1073,9 +1073,9 @@ log_max_wind_fit_intense <- lm( log(hurr_meta_intense_wa_all$max_wind_ms) ~ as.n
        theme_minimal(base_size=theme_base_size) +
 
        labs(
-         title = "Named and Max Wind M/S",
+         title = "Named and Max Wind m/s",
             x = "Year",
-            y = "Max Wind Speed M/S",
+            y = "Max Wind Speed m/s",
           caption=paste("Source:","NOAA - Hurrdat2 data")) +
 
        theme(axis.text.x = element_text(angle = 90, hjust = 1) ,
@@ -1175,9 +1175,9 @@ hurr_meta_cat1 <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hur
   as.numeric(hurr_meta_cat1$year),
   log(hurr_meta_cat1$max_wind_ms),
   "lm",
-  "Category 1 and Max Wind M/S",
+  "Category 1 and Max Wind m/s",
   "Storm",
-  "Max Wind M/S",
+  "Max Wind m/s",
   "NOAA - Hurrdat2 data"
 )
 
@@ -1195,9 +1195,9 @@ hurr_meta_cat2 <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hur
   as.numeric(hurr_meta_cat2$year),
   log(hurr_meta_cat2$max_wind_ms),
   "lm",
-  "Category 2 and Max Wind M/S",
+  "Category 2 and Max Wind m/s",
   "Storm",
-  "Max Wind M/S",
+  "Max Wind m/s",
   "NOAA - Hurrdat2 data"
 )
 
@@ -1216,9 +1216,9 @@ hurr_meta_cat3_wind <- ggScatterAuto(
   as.numeric(hurr_meta_cat3$year),
   log(hurr_meta_cat3$max_wind_ms),
   "lm",
-  "Category 3 and Max Wind M/S",
+  "Category 3 and Max Wind m/s",
   "Storm",
-  "Max Wind M/S",
+  "Max Wind m/s",
   "NOAA - Hurrdat2 data"
 )
 
@@ -1236,9 +1236,9 @@ hurr_meta_cat4 <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hur
   as.numeric(hurr_meta_cat4$year),
   log(hurr_meta_cat4$max_wind_ms),
   "lm",
-  "Category 4 and Max Wind M/S",
+  "Category 4 and Max Wind m/s",
   "Storm",
-  "Max Wind M/S",
+  "Max Wind m/s",
   "NOAA - Hurrdat2 data"
 )
 
@@ -1255,9 +1255,9 @@ hurr_meta_cat5 <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & hur
   as.numeric(hurr_meta_cat5$year),
   log(hurr_meta_cat5$max_wind_ms),
   "lm",
-  "Category 5 and Max Wind M/S",
+  "Category 5 and Max Wind m/s",
   "Storm",
-  "Max Wind M/S",
+  "Max Wind m/s",
   "NOAA - Hurrdat2 data"
 )
 
@@ -1275,9 +1275,9 @@ hurr_meta_cat_3_4 <- subset(hurr_meta, hurr_meta$basin == "Western Atlantic"  & 
   as.numeric(hurr_meta_cat_3_4$year),
   log(hurr_meta_cat_3_4$max_wind_ms),
   "lm",
-  "Category 3,4 and Max Wind M/S",
+  "Category 3,4 and Max Wind m/s",
   "Storm",
-  "Max Wind M/S",
+  "Max Wind m/s",
   "NOAA - Hurrdat2 data"
 )
 
