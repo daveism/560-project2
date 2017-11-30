@@ -8,7 +8,7 @@
   LMI.df$WmaxS_diff <-  as.numeric(LMI.df$WmaxS_diff)
   StartYear <- 1980
   EndYear <- 2016
-  intensity_level <- LMI.df$named
+  # intensity_level <- LMI.df$named
 
   #intense
   # LMI.dfi <- subset( LMI.df, intensity_level == 1)
