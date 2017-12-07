@@ -10,6 +10,7 @@ if (!is.installed("mgcv")){ install.packages("mgcv") }
 if (!is.installed("quantreg")){ install.packages("quantreg") }
 if (!is.installed("xtable")){ install.packages("xtable") }
 
+
 library(ismev)
 library(mgcv)
 library(quantreg)
@@ -96,7 +97,7 @@ library(xtable)
 
 
   ###
-  abs = round(quantile(W, seq(0.2, 0.8, 0.2)))
+  labs = round(quantile(W, seq(0.2, 0.8, 0.2)))
   par(las = 1, mgp = c(2, 0.4, 0), tcl = -0.3)
 
   Year =  LMI.dfi$SYear

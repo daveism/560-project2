@@ -1,4 +1,4 @@
-#image defaults
+#image defaults overides
 theme_base_size <- 9
 image_width <- 4
 image_xwidth <- 5
