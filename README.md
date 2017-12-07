@@ -1,10 +1,7 @@
 # 560-project2
 Final Project for stats 560
 
-NOTE when NOAA updates the hurdat2 data after this year the hurdat2 file names WILL CHANGE and this will need to be updated - [get_data.R](get_data.R)
-
 ## Getting Started
-
 First, you will have to [clone](https://github.com/daveism/560-prez) or [download](https://github.com/daveism/560-prez/archive/master.zip) this repository.
 
 Open R studio and do the following:
@@ -47,3 +44,6 @@ Run all final paper data and charts
 ```r
 source(paste(repo_loc,"final_report_charts.R", sep = "/"))
 ```
+
+
+***NOTE when NOAA updates the hurdat2 data after this year the hurdat2 file names WILL CHANGE and this will need to be updated - [get_data.R](get_data.R)***
