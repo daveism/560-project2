@@ -35,7 +35,7 @@ image_height <- 3
 ### Run the R scripts
 In R studio run
 
-Get the hurdat2 data and clean it up
+Get the hurdat2 data from the NOAA website, clean it up, and reformat it for analysis
 ```r
 source(paste(repo_loc,"run_hurr.R", sep = "/"))
 ```
