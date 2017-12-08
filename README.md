@@ -2,7 +2,7 @@
 Final Project for stats 560
 
 ## Getting Started
-First, you will have to [clone](https://github.com/daveism/560-prez) or [download](https://github.com/daveism/560-prez/archive/master.zip) this repository.
+First, you will have to [clone](https://github.com/daveism/560-project2) or [download](https://github.com/daveism/560-prez/archive/master.zip) this repository.
 
 Open R studio and do the following:
 
