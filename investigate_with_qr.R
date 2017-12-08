@@ -33,7 +33,7 @@ library(xtable)
   # LMI.dfi <- LMI.df
   LMI.dfi <- subset( LMI.dfi , SYear >= StartYear)
 
-
+#mph boot
   WMPH <- LMI.dfi$max_wind_mph
   YearMPH <- LMI.dfi$SYear
   model = rq(WMPH ~ YearMPH, tau = seq(0.025, 0.975, 0.05))
@@ -46,18 +46,36 @@ library(xtable)
 
       par(mfrow=c(1,1))
 
+#ms boot
+  WMS <- LMI.dfi$WmaxS
+  YearMS <- LMI.dfi$SYear
+  modelms = rq(WMS ~ YearMS, tau = seq(0.025, 0.975, 0.05))
+  labs = round(quantile(LMI.dfi$WmaxS, seq(0.2, 1.0, 0.2)))
+  plot(summary(modelms),  parm="YearMS", mar = c(5, 5, 4, 2) + 0.1, pch = 16, lwd = 2, ylab = expression(paste(beta[Year],
+    " [m/s]")), xlab = expression(paste("Wind speed quantile [", tau,"]")), main = "")
+    grid()
+      axis(3, at = seq(0.2, 1.0, 0.2), labels = labs)
+      mtext("Lifetime highest wind speed [m/s]", side = 3, line = 2)
 
-        WMS <- LMI.dfi$WmaxS
-        YearMS <- LMI.dfi$SYear
-        modelms = rq(WMS ~ YearMS, tau = seq(0.025, 0.975, 0.05))
-        labs = round(quantile(LMI.dfi$WmaxS, seq(0.2, 1.0, 0.2)))
-        plot(summary(modelms),  parm="YearMS", mar = c(5, 5, 4, 2) + 0.1, pch = 16, lwd = 2, ylab = expression(paste(beta[Year],
-          " [m/s]")), xlab = expression(paste("Wind speed quantile [", tau,"]")), main = "")
-          grid()
-            axis(3, at = seq(0.2, 1.0, 0.2), labels = labs)
-            mtext("Lifetime highest wind speed [m/s]", side = 3, line = 2)
+      par(mfrow=c(1,1))
 
-            par(mfrow=c(1,1))
+#quantile regresion scatter
+  Year = LMI.dfi$SYear
+  W = LMI.dfi$WmaxS
+  qrm = rq(W ~ Year, tau = 0.5)
+  qrm
+  summary(qrm)
+
+
+  par(las = 1, mgp = c(2, 0.4, 0), tcl = -0.3)
+  plot(Year, W, type = "n", xlab = "Year [C]", ylab = "Wind speed [m/s]")
+  abline(lm(W ~ Year), col = "red", lwd = 2)
+  taus = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
+  for (i in 1:length(taus)) {
+      abline(rq(W ~ Year, tau = taus[i]), col = "gray", lwd = 2)
+  }
+  points(Year, W, pch = 19, cex = 0.4)
+
 
   par(mfrow=c(3,1))
 
