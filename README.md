@@ -16,7 +16,7 @@ You will also need to update the location of the downloaded or cloned repository
 Once updated, copy and paste the first 14 lines so the interactive pieces on this guide work properly [run_hurr.R](https://github.com/daveism/560-project2/blob/master/run_hurr.R#L1:L14).
 
 ```r
-repo_loc <- "/Update to location of the repository on your computer/560-prez"
+repo_loc <- "/Update to location of the repository on your computer/560-project2"
 
 maps_dir <- paste(repo_loc,"maps", sep = "/")
 maps_storm_dir <- paste(repo_loc,"maps","storm", sep = "/")
